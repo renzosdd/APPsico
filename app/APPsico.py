@@ -175,6 +175,3 @@ class Aplicacion:
         self.ventanaPrincipal.mainloop()
 
 APPSico=Aplicacion()
-
-
-#,j.jhlhl-jhjgvjgvjh

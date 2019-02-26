@@ -61,10 +61,11 @@ class interfazPacientes:
         self.scllVPaciente=ttk.Scrollbar(self.pestanaPaciente,command=self.listboxPaciente.yview)
         self.scllVPaciente.grid(row=1,column=2, sticky="nsew")
         self.listboxPaciente.config(yscrollcommand=self.scllVPaciente.set)
-        self.refresco()
-        #Prueba para abrir nueva ventana
         self.btnNuevoPaciente = ttk.Button(self.pestanaPaciente, text='Nuevo Paciente', command=self.nuevoPaciente)
         self.btnNuevoPaciente.grid(row=2,column=3)
+        self.refresco()
+        #Prueba para abrir nueva ventana
+
         return self.pestanaPaciente
     
     def refresco(self):
@@ -170,7 +171,8 @@ class Aplicacion:
         self.pestanaPaciente=interfazPacientes(self.pestanasPrincipal)
         self.pestanasPrincipal.add(self.pestanaPaciente.crearInterfazPaciente(), text="Pacientes")
         #Definicion pestaña sesiones
-        
+        self.pestanaSesiones=interfazPacientes(self.pestanasPrincipal)
+        self.pestanasPrincipal.add(self.pestanaSesiones.crearInterfazPaciente(), text="Sesiones")
     
         self.ventanaPrincipal.mainloop()
 

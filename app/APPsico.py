@@ -47,12 +47,13 @@ class Paciente:
 class ifazPacientes:
     def __init__(self, ventanaPrincipal):
         self.ventanaPrincipal = ventanaPrincipal
+        self.busqueda=StringVar()
 
     def IfazPrincipal(self):
         self.frmIfazPrincipal = ttk.LabelFrame(self.ventanaPrincipal, text="Pacientes")
         self.frmIfazPrincipal.pack(expand=True, fill=BOTH)
         #Campo de busqueda
-        self.txtBuscarPaciente = Entry(self.frmIfazPrincipal)
+        self.txtBuscarPaciente = Entry(self.frmIfazPrincipal,textvariable=self.busqueda)
         self.txtBuscarPaciente.grid(row=0, column=0, pady=5, padx=1, sticky="ew")
         self.txtBuscarPaciente.config(width=45)
         #Boton Buscar
@@ -94,11 +95,12 @@ class ifazPacientes:
         pacientes = Paciente()
         #Modo busqueda
         if modo == 1:
-            busqueda = self.txtBuscarPaciente.get()
-            listapacientes = pacientes.consulta("SELECT * FROM pacientes WHERE nombre LIKE '%"+busqueda+"%' OR apellido LIKE '%"+busqueda+"%' OR mail LIKE '%"+busqueda+"%'")
+            #busqueda = self.busqueda.get()
+            listapacientes = pacientes.consulta("SELECT * FROM pacientes WHERE nombre LIKE '%"+self.busqueda.get()+"%' OR apellido LIKE '%"+self.busqueda.get()+"%' OR mail LIKE '%"+self.busqueda.get()+"%'")
         #Modo para encontrar a todos los pacientes
         elif modo == 2:
             listapacientes = pacientes.consulta("SELECT * FROM pacientes")
+            self.busqueda.set("")
         #Busqueda de paciente pasando un ID
         elif modo == 3 and kwarg:
             id_sel = str(kwarg[0])
@@ -146,13 +148,14 @@ class ifazPacientes:
                 self.buscarPaciente(2)
                 self.cerrarDialogo(self.dlgNvoPaciente)
             except:
-                messagebox.showinfo("Error","No se pudo eliminar")
+                messagebox.showinfo("Error", "No se pudo eliminar")
         else:
             pass
 
-    def cerrarDialogo(self,dialogo):
+    def cerrarDialogo(self, dialogo):
         dialogo.destroy()
-        Aplicacion.ventana=0
+        Aplicacion.ventana = 0
+        self.buscarPaciente(2)
 
     def ifazSesiones(self):
         idPacienteSel = self.treePaciente.focus()
@@ -189,6 +192,7 @@ class ifazPacientes:
                 self.treeifazSesiones.insert('', 'end', text=sesion[2][6:8]+"/"+sesion[2][4:6]+"/"+sesion[2][0:4], values=(sesion[2][8:],sesion[3][8:],sesion[4]))
         else:
             messagebox.showinfo("Error", "No se seleccionó ningún paciente")
+        Aplicacion.ventana=0
 
 
     def ifazFichaPaciente(self, *kargs):
@@ -247,6 +251,7 @@ class ifazPacientes:
                     btnModificarPacientes.config(state='enabled')
                     self.habilitado = 1
                 else:
+                    self.FrmNvoPaciente.config(text="Visualizar Paciente")
                     txtNombre.config(state='disabled')
                     txtApellido.config(state='disabled')
                     txtMail.config(state='disabled')

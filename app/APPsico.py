@@ -135,13 +135,18 @@ class ifazPacientes:
             print("Error")
 
     def eliminarPaciente(self, id_paciente):
-        try:
-            print(str(id_paciente))
-            paciente = Paciente()
-            paciente.baja(str(id_paciente))
-            messagebox.showinfo("Éxito","Se elimino correctamente")
-        except:
-            messagebox.showinfo("Error","No se pudo eliminar")
+        resultado = messagebox.askquestion("Eliminar", "¿Esta seguro que desea eliminar al paciente?", icon='warning')
+        if resultado == 'yes':
+            try:
+                print(str(id_paciente))
+                paciente = Paciente()
+                paciente.baja(str(id_paciente))
+                messagebox.showinfo("Éxito","Se elimino correctamente")
+                self.buscarPaciente(2)
+            except:
+                messagebox.showinfo("Error","No se pudo eliminar")
+        else:
+            pass
 
     def ifazSesiones(self):
         idPacienteSel = self.treePaciente.focus()

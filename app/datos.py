@@ -42,7 +42,7 @@ class Paciente:
         self.tel=tel
         self.notas=notas
         try:
-            query("UPDATE pacientes SET nombre ='"+self.nombre+"',apellido ='"+self.apellido+"',email ='"+self.email+"',telefono ='"+self.tel+"',notas ='"+self.notas+"' WHERE id_paciente='"+self.id+"';")
+            query("UPDATE pacientes SET nombre ='"+self.nombre+"',apellido ='"+self.apellido+"',email ='"+self.email+"',telefono ='"+self.tel+"',notas ='"+self.notas+"' WHERE id_paciente='"+self.id_paciente+"';")
         except:
             pass
     #Metodo para consultar pacientes pasandole la sentencia SQL
@@ -50,9 +50,12 @@ class Paciente:
         row=query(sql).fetchall()
         return row
 
+
+
 pacientes=Paciente()
-pacientes.alta("prueba","es","prueba@es.es","099999999","esunanotamas")
-pacientes.modificar("15","aaaaa","es","aaaaa@es.es","099999999","aaaaaaaa")
+pacientes.modificar("63","Martin","Malespina","Martin@gmail.com","099999999","Notas")
+#pacientes.alta("prueba","es","prueba@es.es","099999999","esunanotamas")
+#pacientes.modificar("15","aaaaa","es","aaaaa@es.es","099999999","aaaaaaaa")
 #pacientes.baja("12")
 #listapacientes = pacientes.consulta("SELECT * FROM pacientes")
 #for paciente in listapacientes:

@@ -65,14 +65,14 @@ class interfazPacientes:
         self.treePaciente=ttk.Treeview(self.frmInterfazPrincipal)
         self.treePaciente.grid(row=1,column=0,columnspan=4) 
         self.treePaciente["columns"]=("one","two","three")
-        self.treePaciente.column("#0", width=40, minwidth=10, stretch=NO)
+        self.treePaciente.column("#0", width=120, minwidth=120, stretch=NO)
         self.treePaciente.column("one", width=150, minwidth=150, stretch=NO)
-        self.treePaciente.column("two", width=150, minwidth=150)
-        self.treePaciente.column("three", width=200, minwidth=150, stretch=NO)
-        self.treePaciente.heading("#0",text="ID",anchor=W)
-        self.treePaciente.heading("one", text="Nombre",anchor=W)
-        self.treePaciente.heading("two", text="Apellido",anchor=W)
-        self.treePaciente.heading("three", text="email",anchor=W)
+        self.treePaciente.column("two", width=200, minwidth=150)
+        self.treePaciente.column("three", width=150, minwidth=150, stretch=NO)
+        self.treePaciente.heading("#0",text="Nombre",anchor=W)
+        self.treePaciente.heading("one", text="Apellido",anchor=W)
+        self.treePaciente.heading("two", text="Email",anchor=W)
+        self.treePaciente.heading("three", text="Teléfono",anchor=W)
         self.scllVPaciente=ttk.Scrollbar(self.frmInterfazPrincipal,command=self.treePaciente.yview)
         self.scllVPaciente.grid(row=1,column=4, sticky="nsew")
         self.treePaciente.config(yscrollcommand=self.scllVPaciente.set)
@@ -102,7 +102,7 @@ class interfazPacientes:
         for entrada in self.treePaciente.get_children():
             self.treePaciente.delete(entrada)
         for paciente in self.listapacientes:
-            self.treePaciente.insert('', 'end', text=paciente[0], values=(paciente[1],paciente[2],paciente[3]),iid=paciente[0])
+            self.treePaciente.insert('', 'end', text=paciente[1], values=(paciente[2],paciente[3],paciente[4]),iid=paciente[0])
 
     def eliminarPaciente(self):
         pacientes = Paciente()

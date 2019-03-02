@@ -54,9 +54,9 @@ pacientes=Paciente()
 pacientes.alta("prueba","es","prueba@es.es","099999999","esunanotamas")
 pacientes.modificar("15","aaaaa","es","aaaaa@es.es","099999999","aaaaaaaa")
 #pacientes.baja("12")
-listapacientes = pacientes.consulta("SELECT * FROM pacientes")
-for paciente in listapacientes:
-    print(paciente)
+#listapacientes = pacientes.consulta("SELECT * FROM pacientes")
+#for paciente in listapacientes:
+#    print(paciente)
 
     
 

@@ -234,8 +234,11 @@ class ifazPacientes:
                     txtComentarios.insert("insert", paciente_sel[5])
                     if(kargs[1] == "m"):
                         self.FrmNvoPaciente.config(text="Modificar Paciente")
-                        btnSalir = ttk.Button(self.FrmNvoPaciente, text='Eliminar paciente', command=lambda: self.eliminarPaciente(paciente_sel[0]))
-                        btnSalir.grid(row=5, column=3, sticky="ew")
+                        btnEliminar = ttk.Button(self.FrmNvoPaciente, text='Eliminar paciente', command=lambda: self.eliminarPaciente(paciente_sel[0]))
+                        btnEliminar.grid(row=5, column=3, sticky="ew")
+                        #btnGuardar = ttk.Button(self.FrmNvoPaciente, text="Guardar", command=lambda: self.modificarPacientes(txtComentarios.get("1.0", 'end-1c')))
+                        #btnGuardar.grid(row=5, column=0, sticky="e")
+
                     elif(kargs[1] == "v"):
                         self.FrmNvoPaciente.config(text="Visualizar Paciente")
                         txtNombre.config(state='disabled')

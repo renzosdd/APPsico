@@ -29,7 +29,7 @@ class Paciente:
 
     def modificar(self, id_paciente, nombre, apellido, email, tel, notas):
         try:
-            query("UPDATE pacientes SET nombre ='"+nombre+"',apellido ='"+apellido+"',email ='"+email+"',telefono ='"+tel+"',notas ='"+notas+"' WHERE id_paciente='"+id_paciente+"';")
+            query("UPDATE pacientes SET nombre='"+nombre+"',apellido='"+apellido+"',mail='"+email+"',telefono='"+tel+"',notas='"+notas+"' WHERE id_paciente="+id_paciente+";")
         except:
             pass
 
@@ -59,7 +59,7 @@ class ifazPacientes:
         self.btnBuscarPaciente = ttk.Button(self.frmIfazPrincipal, text="Buscar", command=lambda: self.buscarPaciente(1))
         self.btnBuscarPaciente.grid(row=0, column=1, pady=5, padx=1, sticky="nsew")
         #Boton Refrescar
-        self.btnRefrescarPacientes = ttk.Button(self.frmIfazPrincipal, text="Refrescar", command=lambda: self.buscarPaciente(2))
+        self.btnRefrescarPacientes = ttk.Button(self.frmIfazPrincipal, text="Reestablecer", command=lambda: self.buscarPaciente(2))
         self.btnRefrescarPacientes.grid(row=0, column=2, pady=5, padx=1, sticky="nsew")
         #Lista de Pacientes
         self.treePaciente = ttk.Treeview(self.frmIfazPrincipal)
@@ -79,13 +79,10 @@ class ifazPacientes:
         #Boton nuevo Paciente
         self.btnifazFichaPaciente = ttk.Button(self.frmIfazPrincipal, text='Nuevo Paciente', command=self.ifazFichaPaciente)
         self.btnifazFichaPaciente.grid(row=2, column=3, sticky="ew")
-        #Boton eliminar Paciente
-        self.btnmodificarPacientes = ttk.Button(self.frmIfazPrincipal, text='Modificar Paciente', command=self.modificarPacientes)
-        self.btnmodificarPacientes.grid(row=2, column=1, sticky="ew")
-        #Boton modificar Paciente
+        #Boton visualizar Paciente
         self.btnvisualizarPacientes = ttk.Button(self.frmIfazPrincipal, text='Visualizar Paciente', command=self.visualizarPacientes)
         self.btnvisualizarPacientes.grid(row=2, column=2, sticky="ew")
-        #Boton visualizar ficha Paciente
+        #Boton visualizar sesiones
         self.btnifazSesiones = ttk.Button(self.frmIfazPrincipal, text='Sesiones', command=self.ifazSesiones)
         self.btnifazSesiones.grid(row=2, column=0, sticky="ew")
         #Refrescamos lista de pacientes
@@ -93,7 +90,7 @@ class ifazPacientes:
         #Retornamos el frame con todos los widgets cargados
         return self.frmIfazPrincipal
 
-    def buscarPaciente(self, modo, *id_paciente):
+    def buscarPaciente(self, modo, *kwarg):
         pacientes = Paciente()
         #Modo busqueda
         if modo == 1:
@@ -102,8 +99,9 @@ class ifazPacientes:
         #Modo para encontrar a todos los pacientes
         elif modo == 2:
             listapacientes = pacientes.consulta("SELECT * FROM pacientes")
-        elif modo == 3 and id_paciente:
-            id_sel = str(id_paciente[0])
+        #Busqueda de paciente pasando un ID
+        elif modo == 3 and kwarg:
+            id_sel = str(kwarg[0])
             paciente_sel = pacientes.consulta('SELECT * FROM pacientes WHERE id_paciente = '+id_sel+';')
             return paciente_sel
         for entrada in self.treePaciente.get_children():
@@ -113,26 +111,29 @@ class ifazPacientes:
 
     def nuevoPaciente(self, txtComentarios):
         paciente = Paciente()
-        print(self.nombre.get())
         try:
             paciente.alta(self.nombre.get(), self.apellido.get(), self.email.get(), self.telefono.get(), txtComentarios)
             messagebox.showinfo("Se creo correctamente", "El paciente " +self.nombre.get()+" "+self.apellido.get()+" fue creado correctamente")
+            self.cerrarDialogo(self.dlgNvoPaciente)
         except:
             messagebox.showinfo("Error al crear el paciente", "No se pudo crear")
         self.buscarPaciente(2)
 
     def visualizarPacientes(self):
         if self.treePaciente.focus():
-            self.ifazFichaPaciente(self.treePaciente.focus(),"v")
+            self.ifazFichaPaciente(self.treePaciente.focus())
         else:
             messagebox.showinfo("Error", "No se seleccionó ningún paciente")
 
-    def modificarPacientes(self):
-        if self.treePaciente.focus():
-            self.ifazFichaPaciente(self.treePaciente.focus(), "m")
-        else:
-            messagebox.showinfo("Error", "No se seleccionó ningún paciente")
-            print("Error")
+    def modificarPacientes(self, id_paciente, txtComentarios):
+        paciente = Paciente()
+        try:
+            paciente.modificar(str(id_paciente), self.nombre.get(), self.apellido.get(), self.email.get(), self.telefono.get(), txtComentarios)
+            messagebox.showinfo("Se Modifico correctamente", "El paciente " +self.nombre.get()+" "+self.apellido.get()+" se modifico correctamente")
+            self.buscarPaciente(2)
+            self.cerrarDialogo(self.dlgNvoPaciente)
+        except:
+            messagebox.showinfo("Error al crear el paciente", "No se pudo crear")
 
     def eliminarPaciente(self, id_paciente):
         resultado = messagebox.askquestion("Eliminar", "¿Esta seguro que desea eliminar al paciente?", icon='warning')
@@ -143,10 +144,15 @@ class ifazPacientes:
                 paciente.baja(str(id_paciente))
                 messagebox.showinfo("Éxito","Se elimino correctamente")
                 self.buscarPaciente(2)
+                self.cerrarDialogo(self.dlgNvoPaciente)
             except:
                 messagebox.showinfo("Error","No se pudo eliminar")
         else:
             pass
+
+    def cerrarDialogo(self,dialogo):
+        dialogo.destroy()
+        Aplicacion.ventana=0
 
     def ifazSesiones(self):
         idPacienteSel = self.treePaciente.focus()
@@ -181,24 +187,28 @@ class ifazPacientes:
                 self.treeifazSesiones.delete(entrada)
             for sesion in self.listaSesiones:
                 self.treeifazSesiones.insert('', 'end', text=sesion[2][6:8]+"/"+sesion[2][4:6]+"/"+sesion[2][0:4], values=(sesion[2][8:],sesion[3][8:],sesion[4]))
-            Aplicacion.ventana = 0
+        else:
+            messagebox.showinfo("Error", "No se seleccionó ningún paciente")
+
 
     def ifazFichaPaciente(self, *kargs):
-        self.nombre = StringVar()
-        self.apellido = StringVar()
-        self.email = StringVar()
-        self.telefono = StringVar()
+        self.habilitado = 0
         if (Aplicacion.ventana == 0):
+            self.nombre = StringVar()
+            self.apellido = StringVar()
+            self.email = StringVar()
+            self.telefono = StringVar()
             #Creamos una ventana
             self.dlgNvoPaciente = Toplevel()
+            self.dlgNvoPaciente.protocol("WM_DELETE_WINDOW", lambda: self.cerrarDialogo(self.dlgNvoPaciente))
             # Incrementa en 1 el contador de ventanas para controlar que solo se abra 1
             Aplicacion.ventana += 1
             self.dlgNvoPaciente.resizable(0,0)
             self.dlgNvoPaciente.title("APPSico - El Bosque")
             self.FrmNvoPaciente = ttk.LabelFrame(self.dlgNvoPaciente, text="Alta paciente")
             self.FrmNvoPaciente.pack(expand=True, fill=BOTH)
-            nombreLabel = Label(self.FrmNvoPaciente, text="Nombre: ")
-            nombreLabel.grid(row=0, column=0, sticky="e", pady=5, padx=1)
+            lblNombre = Label(self.FrmNvoPaciente, text="Nombre: ")
+            lblNombre.grid(row=0, column=0, sticky="e", pady=5, padx=1)
             txtNombre = Entry(self.FrmNvoPaciente, textvariable=self.nombre)
             txtNombre.grid(row=0, column=1, pady=5, sticky="we")
             lblApellido = Label(self.FrmNvoPaciente, text="Apellido: ")
@@ -220,10 +230,31 @@ class ifazPacientes:
             scllVNvoPaciente = Scrollbar(self.FrmNvoPaciente, command=txtComentarios.yview)
             scllVNvoPaciente.grid(row=4, column=4, sticky="nsew")
             txtComentarios.config(yscrollcommand=scllVNvoPaciente.set)
-            btnEnvio = ttk.Button(self.FrmNvoPaciente, text="Guardar", command=lambda: self.nuevoPaciente(txtComentarios.get("1.0", 'end-1c')))
-            btnEnvio.grid(row=5, column=0, sticky="e")
+            btnGuardar = ttk.Button(self.FrmNvoPaciente, text="Guardar", command=lambda: self.nuevoPaciente(txtComentarios.get("1.0", 'end-1c')))
+            btnGuardar.grid(row=5, column=0, sticky="e")
             btnSalir = ttk.Button(self.FrmNvoPaciente, text='Cerrar', command=self.dlgNvoPaciente.destroy)
             btnSalir.grid(row=5, column=1, sticky="w")
+            def habilitarModificacion():
+                if (self.habilitado == 0):
+                    self.FrmNvoPaciente.config(text="Modificar Paciente")
+                    txtNombre.config(state='normal')
+                    txtApellido.config(state='normal')
+                    txtMail.config(state='normal')
+                    txtTel.config(state='normal')
+                    txtComentarios.config(state='normal')
+                    btnGuardar.config(state='normal')
+                    btnEliminarPaciente.config(state='enabled')
+                    btnModificarPacientes.config(state='enabled')
+                    self.habilitado = 1
+                else:
+                    txtNombre.config(state='disabled')
+                    txtApellido.config(state='disabled')
+                    txtMail.config(state='disabled')
+                    txtTel.config(state='disabled')
+                    txtComentarios.config(state='disabled')
+                    btnGuardar.config(state='disabled')
+                    btnEliminarPaciente.config(state='disabled')
+                    self.habilitado = 0
             try:
                 if (kargs):
                     paciente_sel = self.buscarPaciente(3, str(kargs[0]))[0]  
@@ -232,21 +263,26 @@ class ifazPacientes:
                     self.email.set(paciente_sel[3])
                     self.telefono.set(paciente_sel[4])
                     txtComentarios.insert("insert", paciente_sel[5])
-                    if(kargs[1] == "m"):
-                        self.FrmNvoPaciente.config(text="Modificar Paciente")
-                        btnSalir = ttk.Button(self.FrmNvoPaciente, text='Eliminar paciente', command=lambda: self.eliminarPaciente(paciente_sel[0]))
-                        btnSalir.grid(row=5, column=3, sticky="ew")
-                    elif(kargs[1] == "v"):
-                        self.FrmNvoPaciente.config(text="Visualizar Paciente")
-                        txtNombre.config(state='disabled')
-                        txtApellido.config(state='disabled')
-                        txtMail.config(state='disabled')
-                        txtTel.config(state='disabled')
-                        txtComentarios.config(state='disabled')
-                        btnEnvio.config(state='disabled')
+                    #Cambio el titulo del frame
+                    self.FrmNvoPaciente.config(text="Visualizar Paciente")
+                    #Boton Eliminar Paciente
+                    btnEliminarPaciente = ttk.Button(self.FrmNvoPaciente, text='Eliminar paciente', command=lambda: self.eliminarPaciente(paciente_sel[0]))
+                    btnEliminarPaciente.grid(row=5, column=3, sticky="ew")
+                    #Boton habilitar modificacion
+                    btnModificarPacientes = ttk.Button(self.FrmNvoPaciente, text='Modificar', command=habilitarModificacion)
+                    btnModificarPacientes.grid(row=5, column=2, sticky="ew")
+                    #Boton para enviar los cambios a la base
+                    btnGuardar = ttk.Button(self.FrmNvoPaciente, text="Guardar", command=lambda: self.modificarPacientes(paciente_sel[0], txtComentarios.get("1.0", 'end-1c')))
+                    btnGuardar.grid(row=5, column=0, sticky="e")
+                    txtNombre.config(state='disabled')
+                    txtApellido.config(state='disabled')
+                    txtMail.config(state='disabled')
+                    txtTel.config(state='disabled')
+                    txtComentarios.config(state='disabled')
+                    btnGuardar.config(state='disabled')
+                    btnEliminarPaciente.config(state='disabled')
             except:
                 pass
-            Aplicacion.ventana = 0
 
 class Aplicacion:
     #Variable para controlar cantidad de de ventanas abiertas

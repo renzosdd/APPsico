@@ -128,7 +128,6 @@ class IfazPrincipal:
             # Incrementa en 1 el contador de ventanas para controlar que solo se abra 1
             self.ventanas += 1
             self.dlgNvoPaciente.resizable(0,0)
-            self.dlgNvoPaciente.title("APPSico - El Bosque")
             self.FrmNvoPaciente = ttk.LabelFrame(self.dlgNvoPaciente, text="Alta paciente")
             self.FrmNvoPaciente.pack(expand=True, fill=BOTH)
             lblNombre = Label(self.FrmNvoPaciente, text="Nombre: ")
@@ -216,7 +215,6 @@ class IfazPrincipal:
             # Incrementa en 1 el contador de ventanas para controlar que solo se abra 1
             self.ventanas += 1
             self.dlgIfzSesiones.resizable(0, 0)
-            self.dlgIfzSesiones.title("APPSico - El Bosque")
             self.FrmifazSesiones = ttk.LabelFrame(self.dlgIfzSesiones, text="Sesiones del paciente - "+pacienteSel[0][1]+" "+pacienteSel[0][2])
             self.FrmifazSesiones.pack(expand=True, fill=BOTH)
             #Lista de Sesiones
@@ -241,6 +239,7 @@ class IfazPrincipal:
                 self.treeifazSesiones.delete(entrada)
             for sesion in self.listaSesiones:
                 self.treeifazSesiones.insert('', 'end', text=sesion[2][6:8]+"/"+sesion[2][4:6]+"/"+sesion[2][0:4], values=(sesion[2][8:],sesion[3][8:],sesion[4]))
+            #self.ventanaPrincipal.wait_window(self.dlgIfzSesiones)
         else:
             messagebox.showinfo("Error", "No se seleccionó ningún paciente")
         self.ventanas=0

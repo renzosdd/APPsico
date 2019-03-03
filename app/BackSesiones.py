@@ -7,4 +7,5 @@ class Sesion:
 
     def consulta(self, sql):
         row = B.query(sql).fetchall()
+        B.close
         return row

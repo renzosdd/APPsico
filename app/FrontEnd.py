@@ -50,7 +50,19 @@ class IfazPrincipal:
         self.btnifazSesiones.grid(row=2, column=0, sticky="ew")
         #Refrescamos lista de pacientes
         self.buscarPaciente(2)
-        #Retornamos el frame con todos los widgets cargados
+        #Inicializamos el menu contextual
+        self.menu()
+
+    def menu(self):
+        self.aMenu = Menu(self.frmIfazPrincipal, tearoff=0)
+        self.treePaciente.bind('<Button-3>', self.popup)
+        self.aMenu.add_command(label='Sesiones', command=self.ifazSesiones)
+        self.aMenu.add_command(label='Ficha del paciente', command=self.visualizarPacientes)
+
+    def popup(self, event):
+        if self.treePaciente.focus():
+            self.aMenu.post(event.x_root, event.y_root)
+            self.tree_item = self.treePaciente.focus()
 
     def get(self):
         return self.frmIfazPrincipal

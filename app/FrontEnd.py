@@ -119,7 +119,8 @@ class IfazPrincipal:
 
     def ifazFichaPaciente(self, *kargs):
         self.habilitado = 0
-        self.ventanaPrincipal.state(newstate='withdraw')
+        #Ocultamos la ventanaPrincipal mientras esta el dialogo abierto
+        self.ventanaPrincipal.withdraw()
         self.nombre = StringVar()
         self.apellido = StringVar()
         self.email = StringVar()
@@ -211,7 +212,8 @@ class IfazPrincipal:
     def ifazSesiones(self):
         idPacienteSel = self.treePaciente.focus()
         if (idPacienteSel != ""):
-            self.ventanaPrincipal.state(newstate='withdraw')
+            #Ocultamos la ventanaPrincipal mientras esta el dialogo abierto
+            self.ventanaPrincipal.withdraw()
             pacienteSel = self.pacientes.consulta("SELECT * FROM pacientes WHERE id_paciente="+idPacienteSel)
             self.dlgIfzSesiones = Toplevel()
             #Hacemos que el protocolo de cierre de dialogo llame al metodo CerrarDialogo

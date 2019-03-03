@@ -25,7 +25,7 @@ class IfazPrincipal:
         self.btnRefrescarPacientes = ttk.Button(self.frmIfazPrincipal, text="Reestablecer", command=lambda: self.buscarPaciente(2))
         self.btnRefrescarPacientes.grid(row=0, column=2, pady=5, padx=1, sticky="nsew")
         #Lista de Pacientes
-        self.treePaciente = ttk.Treeview(self.frmIfazPrincipal)
+        self.treePaciente = ttk.Treeview(self.frmIfazPrincipal, selectmode='browse')
         self.treePaciente.grid(row=1, column=0, columnspan=4)
         self.treePaciente["columns"] = ("1", "2", "3")
         self.treePaciente.column("#0", width=120, minwidth=120, stretch=NO)
@@ -222,7 +222,7 @@ class IfazPrincipal:
             self.FrmifazSesiones = ttk.LabelFrame(self.dlgIfzSesiones, text="Sesiones del paciente - "+pacienteSel[0][1]+" "+pacienteSel[0][2])
             self.FrmifazSesiones.pack(expand=True, fill=BOTH)
             #Lista de Sesiones
-            self.treeifazSesiones = ttk.Treeview(self.FrmifazSesiones)
+            self.treeifazSesiones = ttk.Treeview(self.FrmifazSesiones,selectmode='browse')
             self.treeifazSesiones.grid(row=1, column=0, columnspan=4)
             self.treeifazSesiones["columns"] = ("1", "2", "3")
             self.treeifazSesiones.column("#0", width=100, minwidth=10, stretch=NO)
@@ -238,7 +238,7 @@ class IfazPrincipal:
             self.treeifazSesiones.config(yscrollcommand=self.scllPaciente.set)
             btnCerrar = ttk.Button(self.FrmifazSesiones, text='Cerrar', command=lambda: self.cerrarDialogo(self.dlgIfzSesiones))
             btnCerrar.grid(row=5, column=1)
-            self.listaSesiones = self.sesiones.consulta("SELECT pacientes.nombre,pacientes.apellido,sesiones.inicio,sesiones.fin,sesiones.notas FROM pacientes INNER JOIN sesiones ON pacientes.id_paciente=sesiones.id_paciente WHERE pacientes.id_paciente="+idPacienteSel)
+            self.listaSesiones = self.sesiones.consulta("SELECT pacientes.nombre,pacientes.apellido,sesiones.inicio,sesiones.fin,sesiones.notas FROM pacientes INNER JOIN sesiones ON pacientes.id_paciente=sesiones.id_paciente WHERE pacientes.id_paciente="+idPacienteSel+" ORDER BY sesiones.inicio DESC;")
             for entrada in self.treeifazSesiones.get_children():
                 self.treeifazSesiones.delete(entrada)
             for sesion in self.listaSesiones:

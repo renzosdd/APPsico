@@ -5,6 +5,7 @@ import sys
 import BackPacientes as P
 import BackSesiones as S
 from tkinter import messagebox
+import ClickDerecho as D
 
 class IfazPrincipal:
     def __init__(self, ventanaPrincipal):
@@ -16,6 +17,7 @@ class IfazPrincipal:
         self.frmIfazPrincipal.pack(expand=True, fill=BOTH)
         #Campo de busqueda
         self.txtBuscarPaciente = Entry(self.frmIfazPrincipal)
+        self.txtBuscarPaciente.bind('<Button-3>',D.clickDerecho, add='')
         self.txtBuscarPaciente.grid(row=0, column=0, pady=5, padx=1, sticky="ew")
         self.txtBuscarPaciente.config(width=45)
         #Boton Buscar
@@ -147,22 +149,27 @@ class IfazPrincipal:
         lblNombre = Label(self.FrmNvoPaciente, text="Nombre: ")
         lblNombre.grid(row=0, column=0, sticky="e", pady=5, padx=1)
         txtNombre = Entry(self.FrmNvoPaciente, textvariable=self.nombre)
+        txtNombre.bind('<Button-3>',D.clickDerecho, add='')
         txtNombre.grid(row=0, column=1, pady=5, sticky="we")
         lblApellido = Label(self.FrmNvoPaciente, text="Apellido: ")
         lblApellido.grid(row=1, column=0, sticky="e", pady=5, padx=1)
         txtApellido = Entry(self.FrmNvoPaciente, textvariable=self.apellido)
+        txtApellido.bind('<Button-3>',D.clickDerecho, add='')
         txtApellido.grid(row=1, column=1, pady=5, sticky="we")
         lblMail = Label(self.FrmNvoPaciente, text="Correo: ")
         lblMail.grid(row=2, column=0, sticky="e", pady=5, padx=1)
         txtMail = Entry(self.FrmNvoPaciente, textvariable=self.email)
+        txtMail.bind('<Button-3>',D.clickDerecho, add='')
         txtMail.grid(row=2, column=1, pady=5, sticky="we")
         lblTel = Label(self.FrmNvoPaciente, text="Telefono: ")
         lblTel.grid(row=3, column=0, sticky="e", pady=5, padx=1)
         txtTel = Entry(self.FrmNvoPaciente, textvariable=self.telefono)
+        txtTel.bind('<Button-3>',D.clickDerecho, add='')
         txtTel.grid(row=3, column=1, pady=5, sticky="we")
         lblComentarios = Label(self.FrmNvoPaciente, text="Notas: ")
         lblComentarios.grid(row=4, column=0, sticky="e", pady=5, padx=1)
         txtComentarios = Text(self.FrmNvoPaciente, height=10, width=40)
+        txtComentarios.bind('<Button-3>',D.clickDerecho, add='')
         txtComentarios.grid(row=4, column=1, columnspan=3, sticky="nsew", pady=5, padx=1)
         scllVNvoPaciente = Scrollbar(self.FrmNvoPaciente, command=txtComentarios.yview)
         scllVNvoPaciente.grid(row=4, column=4, sticky="nsew")

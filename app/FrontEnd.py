@@ -114,106 +114,108 @@ class IfazPrincipal:
     def cerrarDialogo(self,dialogo):
         dialogo.destroy()
         self.ventanas=0
+        self.ventanaPrincipal.state(newstate='normal')
+        self.ventanaPrincipal.deiconify()
 
     def ifazFichaPaciente(self, *kargs):
         self.habilitado = 0
-        if (self.ventanas == 0):
-            self.nombre = StringVar()
-            self.apellido = StringVar()
-            self.email = StringVar()
-            self.telefono = StringVar()
-            #Creamos una ventana
-            self.dlgNvoPaciente = Toplevel()
-            self.dlgNvoPaciente.protocol("WM_DELETE_WINDOW", lambda: self.cerrarDialogo(self.dlgNvoPaciente))
-            # Incrementa en 1 el contador de ventanas para controlar que solo se abra 1
-            self.ventanas += 1
-            self.dlgNvoPaciente.resizable(0,0)
-            self.FrmNvoPaciente = ttk.LabelFrame(self.dlgNvoPaciente, text="Alta paciente")
-            self.FrmNvoPaciente.pack(expand=True, fill=BOTH)
-            lblNombre = Label(self.FrmNvoPaciente, text="Nombre: ")
-            lblNombre.grid(row=0, column=0, sticky="e", pady=5, padx=1)
-            txtNombre = Entry(self.FrmNvoPaciente, textvariable=self.nombre)
-            txtNombre.grid(row=0, column=1, pady=5, sticky="we")
-            lblApellido = Label(self.FrmNvoPaciente, text="Apellido: ")
-            lblApellido.grid(row=1, column=0, sticky="e", pady=5, padx=1)
-            txtApellido = Entry(self.FrmNvoPaciente, textvariable=self.apellido)
-            txtApellido.grid(row=1, column=1, pady=5, sticky="we")
-            lblMail = Label(self.FrmNvoPaciente, text="Correo: ")
-            lblMail.grid(row=2, column=0, sticky="e", pady=5, padx=1)
-            txtMail = Entry(self.FrmNvoPaciente, textvariable=self.email)
-            txtMail.grid(row=2, column=1, pady=5, sticky="we")
-            lblTel = Label(self.FrmNvoPaciente, text="Telefono: ")
-            lblTel.grid(row=3, column=0, sticky="e", pady=5, padx=1)
-            txtTel = Entry(self.FrmNvoPaciente, textvariable=self.telefono)
-            txtTel.grid(row=3, column=1, pady=5, sticky="we")
-            lblComentarios = Label(self.FrmNvoPaciente, text="Notas: ")
-            lblComentarios.grid(row=4, column=0, sticky="e", pady=5, padx=1)
-            txtComentarios = Text(self.FrmNvoPaciente, height=10, width=40)
-            txtComentarios.grid(row=4, column=1, columnspan=3, sticky="nsew", pady=5, padx=1)
-            scllVNvoPaciente = Scrollbar(self.FrmNvoPaciente, command=txtComentarios.yview)
-            scllVNvoPaciente.grid(row=4, column=4, sticky="nsew")
-            txtComentarios.config(yscrollcommand=scllVNvoPaciente.set)
-            btnGuardar = ttk.Button(self.FrmNvoPaciente, text="Guardar", command=lambda: self.nuevoPaciente(txtComentarios.get("1.0", 'end-1c')))
+        self.ventanaPrincipal.state(newstate='withdraw')
+        self.nombre = StringVar()
+        self.apellido = StringVar()
+        self.email = StringVar()
+        self.telefono = StringVar()
+        #Creamos una ventana
+        self.dlgNvoPaciente = Toplevel()
+        #Hacemos que el protocolo de cierre de dialogo llame al metodo CerrarDialogo
+        self.dlgNvoPaciente.protocol("WM_DELETE_WINDOW", lambda: self.cerrarDialogo(self.dlgNvoPaciente))
+        self.dlgNvoPaciente.resizable(0,0)
+        self.FrmNvoPaciente = ttk.LabelFrame(self.dlgNvoPaciente, text="Alta paciente")
+        self.FrmNvoPaciente.pack(expand=True, fill=BOTH)
+        lblNombre = Label(self.FrmNvoPaciente, text="Nombre: ")
+        lblNombre.grid(row=0, column=0, sticky="e", pady=5, padx=1)
+        txtNombre = Entry(self.FrmNvoPaciente, textvariable=self.nombre)
+        txtNombre.grid(row=0, column=1, pady=5, sticky="we")
+        lblApellido = Label(self.FrmNvoPaciente, text="Apellido: ")
+        lblApellido.grid(row=1, column=0, sticky="e", pady=5, padx=1)
+        txtApellido = Entry(self.FrmNvoPaciente, textvariable=self.apellido)
+        txtApellido.grid(row=1, column=1, pady=5, sticky="we")
+        lblMail = Label(self.FrmNvoPaciente, text="Correo: ")
+        lblMail.grid(row=2, column=0, sticky="e", pady=5, padx=1)
+        txtMail = Entry(self.FrmNvoPaciente, textvariable=self.email)
+        txtMail.grid(row=2, column=1, pady=5, sticky="we")
+        lblTel = Label(self.FrmNvoPaciente, text="Telefono: ")
+        lblTel.grid(row=3, column=0, sticky="e", pady=5, padx=1)
+        txtTel = Entry(self.FrmNvoPaciente, textvariable=self.telefono)
+        txtTel.grid(row=3, column=1, pady=5, sticky="we")
+        lblComentarios = Label(self.FrmNvoPaciente, text="Notas: ")
+        lblComentarios.grid(row=4, column=0, sticky="e", pady=5, padx=1)
+        txtComentarios = Text(self.FrmNvoPaciente, height=10, width=40)
+        txtComentarios.grid(row=4, column=1, columnspan=3, sticky="nsew", pady=5, padx=1)
+        scllVNvoPaciente = Scrollbar(self.FrmNvoPaciente, command=txtComentarios.yview)
+        scllVNvoPaciente.grid(row=4, column=4, sticky="nsew")
+        txtComentarios.config(yscrollcommand=scllVNvoPaciente.set)
+        btnGuardar = ttk.Button(self.FrmNvoPaciente, text="Guardar", command=lambda: self.nuevoPaciente(txtComentarios.get("1.0", 'end-1c')))
+        btnGuardar.grid(row=5, column=0, sticky="e")
+        btnSalir = ttk.Button(self.FrmNvoPaciente, text='Cerrar', command=lambda: self.cerrarDialogo(self.dlgNvoPaciente))
+        btnSalir.grid(row=5, column=1, sticky="w")
+        def habilitarModificacion():
+            if (self.habilitado == 0):
+                self.FrmNvoPaciente.config(text="Modificar Paciente")
+                txtNombre.config(state='normal')
+                txtApellido.config(state='normal')
+                txtMail.config(state='normal')
+                txtTel.config(state='normal')
+                txtComentarios.config(state='normal')
+                btnGuardar.config(state='normal')
+                btnEliminarPaciente.config(state='enabled')
+                btnModificarPacientes.config(state='enabled')
+                btnModificarPacientes.config(text="Visualizar")
+                self.habilitado = 1
+            else:
+                self.FrmNvoPaciente.config(text="Visualizar Paciente")
+                txtNombre.config(state='disabled')
+                txtApellido.config(state='disabled')
+                txtMail.config(state='disabled')
+                txtTel.config(state='disabled')
+                txtComentarios.config(state='disabled')
+                btnGuardar.config(state='disabled')
+                btnEliminarPaciente.config(state='disabled')
+                btnModificarPacientes.config(text="Modificar")
+                self.habilitado = 0
+        if (kargs):
+            paciente_sel = self.buscarPaciente(3, str(kargs[0]))[0]  
+            self.nombre.set(paciente_sel[1])
+            self.apellido.set(paciente_sel[2])
+            self.email.set(paciente_sel[3])
+            self.telefono.set(paciente_sel[4])
+            txtComentarios.insert("insert", paciente_sel[5])
+            #Cambio el titulo del frame
+            self.FrmNvoPaciente.config(text="Visualizar Paciente")
+            #Boton Eliminar Paciente
+            btnEliminarPaciente = ttk.Button(self.FrmNvoPaciente, text='Eliminar paciente', command=lambda: self.eliminarPaciente(paciente_sel[0]))
+            btnEliminarPaciente.grid(row=5, column=3, sticky="ew")
+            #Boton habilitar modificacion
+            btnModificarPacientes = ttk.Button(self.FrmNvoPaciente, text='Modificar', command=habilitarModificacion)
+            btnModificarPacientes.grid(row=5, column=2, sticky="ew")
+            #Boton para enviar los cambios a la base
+            btnGuardar = ttk.Button(self.FrmNvoPaciente, text="Guardar", command=lambda: self.modificarPacientes(paciente_sel[0], txtComentarios.get("1.0", 'end-1c')))
             btnGuardar.grid(row=5, column=0, sticky="e")
-            btnSalir = ttk.Button(self.FrmNvoPaciente, text='Cerrar', command=self.dlgNvoPaciente.destroy)
-            btnSalir.grid(row=5, column=1, sticky="w")
-            def habilitarModificacion():
-                if (self.habilitado == 0):
-                    self.FrmNvoPaciente.config(text="Modificar Paciente")
-                    txtNombre.config(state='normal')
-                    txtApellido.config(state='normal')
-                    txtMail.config(state='normal')
-                    txtTel.config(state='normal')
-                    txtComentarios.config(state='normal')
-                    btnGuardar.config(state='normal')
-                    btnEliminarPaciente.config(state='enabled')
-                    btnModificarPacientes.config(state='enabled')
-                    self.habilitado = 1
-                else:
-                    txtNombre.config(state='disabled')
-                    txtApellido.config(state='disabled')
-                    txtMail.config(state='disabled')
-                    txtTel.config(state='disabled')
-                    txtComentarios.config(state='disabled')
-                    btnGuardar.config(state='disabled')
-                    btnEliminarPaciente.config(state='disabled')
-                    self.habilitado = 0
-            try:
-                if (kargs):
-                    paciente_sel = self.buscarPaciente(3, str(kargs[0]))[0]  
-                    self.nombre.set(paciente_sel[1])
-                    self.apellido.set(paciente_sel[2])
-                    self.email.set(paciente_sel[3])
-                    self.telefono.set(paciente_sel[4])
-                    txtComentarios.insert("insert", paciente_sel[5])
-                    #Cambio el titulo del frame
-                    self.FrmNvoPaciente.config(text="Visualizar Paciente")
-                    #Boton Eliminar Paciente
-                    btnEliminarPaciente = ttk.Button(self.FrmNvoPaciente, text='Eliminar paciente', command=lambda: self.eliminarPaciente(paciente_sel[0]))
-                    btnEliminarPaciente.grid(row=5, column=3, sticky="ew")
-                    #Boton habilitar modificacion
-                    btnModificarPacientes = ttk.Button(self.FrmNvoPaciente, text='Modificar', command=habilitarModificacion)
-                    btnModificarPacientes.grid(row=5, column=2, sticky="ew")
-                    #Boton para enviar los cambios a la base
-                    btnGuardar = ttk.Button(self.FrmNvoPaciente, text="Guardar", command=lambda: self.modificarPacientes(paciente_sel[0], txtComentarios.get("1.0", 'end-1c')))
-                    btnGuardar.grid(row=5, column=0, sticky="e")
-                    txtNombre.config(state='disabled')
-                    txtApellido.config(state='disabled')
-                    txtMail.config(state='disabled')
-                    txtTel.config(state='disabled')
-                    txtComentarios.config(state='disabled')
-                    btnGuardar.config(state='disabled')
-                    btnEliminarPaciente.config(state='disabled')
-            except:
-                pass
+            txtNombre.config(state='disabled')
+            txtApellido.config(state='disabled')
+            txtMail.config(state='disabled')
+            txtTel.config(state='disabled')
+            txtComentarios.config(state='disabled')
+            btnGuardar.config(state='disabled')
+            btnEliminarPaciente.config(state='disabled')
 
     def ifazSesiones(self):
         idPacienteSel = self.treePaciente.focus()
-        if (self.ventanas == 0 and idPacienteSel != ""):
+        if (idPacienteSel != ""):
+            self.ventanaPrincipal.state(newstate='withdraw')
             pacienteSel = self.pacientes.consulta("SELECT * FROM pacientes WHERE id_paciente="+idPacienteSel)
             self.dlgIfzSesiones = Toplevel()
-            # Incrementa en 1 el contador de ventanas para controlar que solo se abra 1
-            self.ventanas += 1
+            #Hacemos que el protocolo de cierre de dialogo llame al metodo CerrarDialogo
+            self.dlgIfzSesiones.protocol("WM_DELETE_WINDOW", lambda: self.cerrarDialogo(self.dlgIfzSesiones))
             self.dlgIfzSesiones.resizable(0, 0)
             self.FrmifazSesiones = ttk.LabelFrame(self.dlgIfzSesiones, text="Sesiones del paciente - "+pacienteSel[0][1]+" "+pacienteSel[0][2])
             self.FrmifazSesiones.pack(expand=True, fill=BOTH)
@@ -232,14 +234,12 @@ class IfazPrincipal:
             self.scllPaciente = ttk.Scrollbar(self.FrmifazSesiones, command=self.treeifazSesiones.yview)
             self.scllPaciente.grid(row=1, column=4, sticky="nsew")
             self.treeifazSesiones.config(yscrollcommand=self.scllPaciente.set)
-            btnCerrar = ttk.Button(self.FrmifazSesiones, text='Cerrar', command=self.dlgIfzSesiones.destroy)
+            btnCerrar = ttk.Button(self.FrmifazSesiones, text='Cerrar', command=lambda: self.cerrarDialogo(self.dlgIfzSesiones))
             btnCerrar.grid(row=5, column=1)
             self.listaSesiones = self.sesiones.consulta("SELECT pacientes.nombre,pacientes.apellido,sesiones.inicio,sesiones.fin,sesiones.notas FROM pacientes INNER JOIN sesiones ON pacientes.id_paciente=sesiones.id_paciente WHERE pacientes.id_paciente="+idPacienteSel)
             for entrada in self.treeifazSesiones.get_children():
                 self.treeifazSesiones.delete(entrada)
             for sesion in self.listaSesiones:
                 self.treeifazSesiones.insert('', 'end', text=sesion[2][6:8]+"/"+sesion[2][4:6]+"/"+sesion[2][0:4], values=(sesion[2][8:],sesion[3][8:],sesion[4]))
-            #self.ventanaPrincipal.wait_window(self.dlgIfzSesiones)
         else:
             messagebox.showinfo("Error", "No se seleccionó ningún paciente")
-        self.ventanas=0

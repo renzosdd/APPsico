@@ -7,4 +7,5 @@ SELECT pacientes.nombre,pacientes.apellido,sesiones.inicio,sesiones.fin,sesiones
 /* Para insertar datos en las tablas pacientes y sesiones */
 INSERT INTO pacientes (nombre,apellido,mail,telefono,notas) VALUES ('Romina','Malespina','rominamalespina@gmail.com','092014765','Otra nota');
 
-INSERT INTO sesiones(notas,inicio,fin,id_paciente) values('Esto es un comentario para la nota','20190224 2:30:00 PM','20190224 3:55:00 PM',2);
+
+INSERT INTO sesiones(notas,inicio,fin,id_paciente) values('Esto es un comentario para la nota','20190224 19:30:00','20190225 19:55:00',63);

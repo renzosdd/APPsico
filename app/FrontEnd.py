@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import scrolledtext as st
 from tkinter.ttk import *
 import sys
 import BackPacientes as P
@@ -169,12 +170,9 @@ class IfazPrincipal:
         txtTel.grid(row=3, column=1, pady=5, sticky="we")
         lblComentarios = Label(self.FrmNvoPaciente, text="Notas: ")
         lblComentarios.grid(row=4, column=0, sticky="e", pady=5, padx=1)
-        txtComentarios = Text(self.FrmNvoPaciente, height=10, width=40)
+        txtComentarios = st.ScrolledText(self.FrmNvoPaciente, height=10, width=40)
         txtComentarios.bind('<Button-3>',D.clickDerecho, add='')
         txtComentarios.grid(row=4, column=1, columnspan=3, sticky="nsew", pady=5, padx=1)
-        scllVNvoPaciente = Scrollbar(self.FrmNvoPaciente, command=txtComentarios.yview)
-        scllVNvoPaciente.grid(row=4, column=4, sticky="nsew")
-        txtComentarios.config(yscrollcommand=scllVNvoPaciente.set)
         btnGuardar = ttk.Button(self.FrmNvoPaciente, text="Guardar", command=lambda: self.nuevoPaciente(txtComentarios.get("1.0", 'end-1c')))
         btnGuardar.grid(row=5, column=0, sticky="e")
         btnSalir = ttk.Button(self.FrmNvoPaciente, text='Cerrar', command=lambda: self.cerrarDialogo(self.dlgNvoPaciente))

@@ -55,6 +55,7 @@ class IfazPrincipal:
         #Inicializamos el menu contextual
         self.menu()
 
+    #Menu contextual para TreePacientes
     def menu(self):
         self.aMenu = Menu(self.frmIfazPrincipal, tearoff=0)
         self.treePaciente.bind('<Button-3>', self.popup)

@@ -16,8 +16,9 @@ class IfazPrincipal:
         self.ventanas = 0
         self.frmIfazPrincipal = ttk.LabelFrame(self.ventanaPrincipal, text="Pacientes")
         self.frmIfazPrincipal.pack(expand=True, fill=BOTH)
+        self.busqueda=StringVar()
         #Campo de busqueda
-        self.txtBuscarPaciente = Entry(self.frmIfazPrincipal)
+        self.txtBuscarPaciente = Entry(self.frmIfazPrincipal,textvariable=self.busqueda)
         self.txtBuscarPaciente.bind('<Button-3>',D.clickDerecho, add='')
         self.txtBuscarPaciente.grid(row=0, column=0, pady=5, padx=1, sticky="ew")
         self.txtBuscarPaciente.config(width=45)
@@ -48,7 +49,7 @@ class IfazPrincipal:
         #Boton visualizar Paciente
         self.btnvisualizarPacientes = ttk.Button(self.frmIfazPrincipal, text='Visualizar Paciente', command=self.visualizarPacientes)
         self.btnvisualizarPacientes.grid(row=2, column=2, sticky="ew")
-        #Boton visualizar sesiones
+        #Boton para abrir interfaz sesiones
         self.btnifazSesiones = ttk.Button(self.frmIfazPrincipal, text='Sesiones', command=self.ifazSesiones)
         self.btnifazSesiones.grid(row=2, column=0, sticky="ew")
         #Refrescamos lista de pacientes
@@ -74,11 +75,12 @@ class IfazPrincipal:
     def buscarPaciente(self, modo, *kwarg):
         #Modo busqueda
         if modo == 1:
-            busqueda = self.txtBuscarPaciente.get()
+            busqueda = self.busqueda.get()
             listapacientes = self.pacientes.consulta("SELECT * FROM pacientes WHERE nombre LIKE '%"+busqueda+"%' OR apellido LIKE '%"+busqueda+"%' OR mail LIKE '%"+busqueda+"%'")
         #Modo para encontrar a todos los pacientes
         elif modo == 2:
             listapacientes = self.pacientes.consulta("SELECT * FROM pacientes")
+            self.busqueda.set("")
         #Busqueda de paciente pasando un ID
         elif modo == 3 and kwarg:
             id_sel = str(kwarg[0])
@@ -91,7 +93,8 @@ class IfazPrincipal:
 
     def nuevoPaciente(self, txtComentarios):
         try:
-            self.paciente.alta(self.nombre.get(), self.apellido.get(), self.email.get(), self.telefono.get(), txtComentarios)
+            self.pacientes.alta(self.nombre.get(), self.apellido.get(), self.email.get(), self.telefono.get(), txtComentarios)
+            #print(self.nombre.get()+self.apellido.get()+self.email.get()+self.telefono.get()+txtComentarios)
             messagebox.showinfo("Se creo correctamente", "El paciente " +self.nombre.get()+" "+self.apellido.get()+" fue creado correctamente")
             self.cerrarDialogo(self.dlgNvoPaciente)
         except:
@@ -106,7 +109,8 @@ class IfazPrincipal:
 
     def modificarPacientes(self, id_paciente, txtComentarios):
         try:
-            self.paciente.modificar(str(id_paciente), self.nombre.get(), self.apellido.get(), self.email.get(), self.telefono.get(), txtComentarios)
+            self.pacientes.modificar(str(id_paciente), self.nombre.get(), self.apellido.get(), self.email.get(), self.telefono.get(), txtComentarios)
+            #print(str(id_paciente)+self.nombre.get()+self.apellido.get()+self.email.get()+self.telefono.get()+txtComentarios)
             messagebox.showinfo("Se Modifico correctamente", "El paciente " +self.nombre.get()+" "+self.apellido.get()+" se modifico correctamente")
             self.buscarPaciente(2)
             self.cerrarDialogo(self.dlgNvoPaciente)
@@ -117,8 +121,7 @@ class IfazPrincipal:
         resultado = messagebox.askquestion("Eliminar", "¿Esta seguro que desea eliminar al paciente?", icon='warning')
         if resultado == 'yes':
             try:
-                print(str(id_paciente))
-                self.paciente.baja(str(id_paciente))
+                self.pacientes.baja(str(id_paciente))
                 messagebox.showinfo("Éxito","Se elimino correctamente")
                 self.buscarPaciente(2)
                 self.cerrarDialogo(self.dlgNvoPaciente)
@@ -217,8 +220,9 @@ class IfazPrincipal:
             btnModificarPacientes = ttk.Button(self.FrmNvoPaciente, text='Modificar', command=habilitarModificacion)
             btnModificarPacientes.grid(row=5, column=2, sticky="ew")
             #Boton para enviar los cambios a la base
-            btnGuardar = ttk.Button(self.FrmNvoPaciente, text="Guardar", command=lambda: self.modificarPacientes(paciente_sel[0], txtComentarios.get("1.0", 'end-1c')))
-            btnGuardar.grid(row=5, column=0, sticky="e")
+            #btnGuardar = ttk.Button(self.FrmNvoPaciente, text="Guardar", command=lambda: self.modificarPacientes(paciente_sel[0], txtComentarios.get("1.0", 'end-1c')))
+            #btnGuardar.grid(row=5, column=0, sticky="e")
+            btnGuardar.config(command=lambda: self.modificarPacientes(paciente_sel[0], txtComentarios.get("1.0", 'end-1c')))
             txtNombre.config(state='disabled')
             txtApellido.config(state='disabled')
             txtMail.config(state='disabled')

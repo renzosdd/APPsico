@@ -2,18 +2,6 @@ import tkinter as tk
 from tkinter import ttk
 from sys import platform as _platform
 
-def sistemaOperativo():
-    if _platform == "linux" or _platform == "linux2":
-        return "linux"
-    elif _platform == "darwin":
-        return "mac"
-    elif _platform == "win32":
-        return "win32"
-    elif _platform == "win64":
-        return "win64"
-
-
-
 def clickDerecho(e):
     try:
         def copiar(e, apnd=0):

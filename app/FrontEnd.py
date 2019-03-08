@@ -7,6 +7,7 @@ import BackPacientes as P
 import BackSesiones as S
 from tkinter import messagebox
 import ClickDerecho as D
+from sys import platform as _platform
 
 class IfazPrincipal:
     def __init__(self, ventanaPrincipal):
@@ -19,7 +20,10 @@ class IfazPrincipal:
         self.busqueda=StringVar()
         #Campo de busqueda
         self.txtBuscarPaciente = Entry(self.frmIfazPrincipal,textvariable=self.busqueda)
-        self.txtBuscarPaciente.bind('<Button-3>',D.clickDerecho, add='')
+        if _platform == "linux" or _platform == "linux2" or _platform == "win32" or _platform == "win64":
+            self.txtBuscarPaciente.bind('<Button-3>',D.clickDerecho, add='')
+        elif _platform == "darwin":
+            self.txtBuscarPaciente.bind('<Button-2>',D.clickDerecho, add='')
         self.txtBuscarPaciente.grid(row=0, column=0, pady=5, padx=1, sticky="ew")
         self.txtBuscarPaciente.config(width=45)
         #Boton Buscar
@@ -60,7 +64,10 @@ class IfazPrincipal:
     #Menu contextual para TreePacientes
     def menu(self):
         self.aMenu = Menu(self.frmIfazPrincipal, tearoff=0)
-        self.treePaciente.bind('<Button-3>', self.popup)
+        if _platform == "linux" or _platform == "linux2" or _platform == "win32" or _platform == "win64":
+            self.treePaciente.bind('<Button-3>', self.popup)
+        elif _platform == "darwin":
+            self.treePaciente.bind('<Button-2>', self.popup)
         self.aMenu.add_command(label='Sesiones', command=self.ifazSesiones)
         self.aMenu.add_command(label='Ficha del paciente', command=self.visualizarPacientes)
 

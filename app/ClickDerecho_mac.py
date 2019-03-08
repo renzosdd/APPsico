@@ -1,5 +1,18 @@
 import tkinter as tk
 from tkinter import ttk
+from sys import platform as _platform
+
+def sistemaOperativo():
+    if _platform == "linux" or _platform == "linux2":
+        return "linux"
+    elif _platform == "darwin":
+        return "mac"
+    elif _platform == "win32":
+        return "win32"
+    elif _platform == "win64":
+        return "win64"
+
+
 
 def clickDerecho(e):
     try:
@@ -37,9 +50,12 @@ def clickDerecho(e):
 def menuClickDerecho(r):
 
     try:
-        for b in [ 'Text', 'Entry', 'Listbox', 'Label']: #
-            r.bind_class(b, sequence='<Button-2>',
-                         func=clickDerecho, add='')
+        if _platform == "linux" or _platform == "linux2" or _platform == "win32" or _platform == "win64":
+            for b in [ 'Text', 'Entry', 'Listbox', 'Label']: #
+                r.bind_class(b, sequence='<Button-3>', func=clickDerecho, add='')
+        elif _platform == "darwin":
+            for b in [ 'Text', 'Entry', 'Listbox', 'Label']: #
+                r.bind_class(b, sequence='<Button-2>', func=clickDerecho, add='')
     except:
         print (' - menuClickDerecho, something wrong')
         pass

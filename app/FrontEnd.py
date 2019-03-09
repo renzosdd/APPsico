@@ -10,10 +10,14 @@ import ClickDerecho as D
 from sys import platform as _platform
 
 class IfazPrincipal:
-    def __init__(self, ventanaPrincipal):
-        self.ventanaPrincipal = ventanaPrincipal
+    def __init__(self, ifazLogin,usuario):
+        self.ventanaPrincipal = Toplevel(ifazLogin)
+        self.ventanaPrincipal.title("APPSico - El Bosque")
+        self.ventanaPrincipal.resizable(0, 0)
+        self.ventanaPrincipal.protocol("WM_DELETE_WINDOW", lambda: self.cerrarDialogo(self.ventanaPrincipal,ifazLogin))
         self.pacientes = P.Paciente()
         self.sesiones=S.Sesion()
+        self.usuario=usuario
         self.ventanas = 0
         self.frmIfazPrincipal = ttk.LabelFrame(self.ventanaPrincipal, text="Pacientes")
         self.frmIfazPrincipal.pack(expand=True, fill=BOTH)
@@ -76,22 +80,19 @@ class IfazPrincipal:
             self.aMenu.post(event.x_root, event.y_root)
             self.tree_item = self.treePaciente.focus()
 
-    def get(self):
-        return self.frmIfazPrincipal
-
     def buscarPaciente(self, modo, *kwarg):
         #Modo busqueda
         if modo == 1:
             busqueda = self.busqueda.get()
-            listapacientes = self.pacientes.consulta("SELECT * FROM pacientes WHERE nombre LIKE '%"+busqueda+"%' OR apellido LIKE '%"+busqueda+"%' OR mail LIKE '%"+busqueda+"%'")
+            listapacientes = self.pacientes.consulta("SELECT * FROM pacientes WHERE nombre LIKE '%"+busqueda+"%' OR apellido LIKE '%"+busqueda+"%' OR mail LIKE '%"+busqueda+"%' AND usuario='"+self.usuario+"'")
         #Modo para encontrar a todos los pacientes
         elif modo == 2:
-            listapacientes = self.pacientes.consulta("SELECT * FROM pacientes")
+            listapacientes = self.pacientes.consulta("SELECT * FROM pacientes WHERE usuario='"+self.usuario+"'")
             self.busqueda.set("")
         #Busqueda de paciente pasando un ID
         elif modo == 3 and kwarg:
             id_sel = str(kwarg[0])
-            paciente_sel = self.pacientes.consulta('SELECT * FROM pacientes WHERE id_paciente = '+id_sel+';')
+            paciente_sel = self.pacientes.consulta("SELECT * FROM pacientes WHERE id_paciente = '"+id_sel+"' AND usuario='"+self.usuario+"'")
             return paciente_sel
         for entrada in self.treePaciente.get_children():
             self.treePaciente.delete(entrada)
@@ -100,10 +101,9 @@ class IfazPrincipal:
 
     def nuevoPaciente(self, txtComentarios):
         try:
-            self.pacientes.alta(self.nombre.get(), self.apellido.get(), self.email.get(), self.telefono.get(), txtComentarios)
-            #print(self.nombre.get()+self.apellido.get()+self.email.get()+self.telefono.get()+txtComentarios)
+            self.pacientes.alta(self.nombre.get(), self.apellido.get(), self.email.get(), self.telefono.get(), txtComentarios, self.usuario)
             messagebox.showinfo("Se creo correctamente", "El paciente " +self.nombre.get()+" "+self.apellido.get()+" fue creado correctamente")
-            self.cerrarDialogo(self.dlgNvoPaciente)
+            self.cerrarDialogo(self.dlgNvoPaciente,self.ventanaPrincipal)
         except:
             messagebox.showinfo("Error al crear el paciente", "No se pudo crear")
         self.buscarPaciente(2)
@@ -117,10 +117,9 @@ class IfazPrincipal:
     def modificarPacientes(self, id_paciente, txtComentarios):
         try:
             self.pacientes.modificar(str(id_paciente), self.nombre.get(), self.apellido.get(), self.email.get(), self.telefono.get(), txtComentarios)
-            #print(str(id_paciente)+self.nombre.get()+self.apellido.get()+self.email.get()+self.telefono.get()+txtComentarios)
             messagebox.showinfo("Se Modifico correctamente", "El paciente " +self.nombre.get()+" "+self.apellido.get()+" se modifico correctamente")
             self.buscarPaciente(2)
-            self.cerrarDialogo(self.dlgNvoPaciente)
+            self.cerrarDialogo(self.dlgNvoPaciente,self.ventanaPrincipal)
         except:
             messagebox.showinfo("Error al crear el paciente", "No se pudo crear")
 
@@ -131,17 +130,17 @@ class IfazPrincipal:
                 self.pacientes.baja(str(id_paciente))
                 messagebox.showinfo("Éxito","Se elimino correctamente")
                 self.buscarPaciente(2)
-                self.cerrarDialogo(self.dlgNvoPaciente)
+                self.cerrarDialogo(self.dlgNvoPaciente,self.ventanaPrincipal)
             except:
                 messagebox.showinfo("Error","No se pudo eliminar")
         else:
             pass
 
-    def cerrarDialogo(self,dialogo):
+    def cerrarDialogo(self,dialogo,parent):
         dialogo.destroy()
         self.ventanas=0
-        self.ventanaPrincipal.state(newstate='normal')
-        self.ventanaPrincipal.deiconify()
+        parent.state(newstate='normal')
+        parent.deiconify()
 
     def ifazFichaPaciente(self, *kargs):
         self.habilitado = 0
@@ -154,7 +153,7 @@ class IfazPrincipal:
         #Creamos una ventana
         self.dlgNvoPaciente = Toplevel()
         #Hacemos que el protocolo de cierre de dialogo llame al metodo CerrarDialogo
-        self.dlgNvoPaciente.protocol("WM_DELETE_WINDOW", lambda: self.cerrarDialogo(self.dlgNvoPaciente))
+        self.dlgNvoPaciente.protocol("WM_DELETE_WINDOW", lambda: self.cerrarDialogo(self.dlgNvoPaciente,self.ventanaPrincipal))
         self.dlgNvoPaciente.resizable(0,0)
         self.FrmNvoPaciente = ttk.LabelFrame(self.dlgNvoPaciente, text="Alta paciente")
         self.FrmNvoPaciente.pack(expand=True, fill=BOTH)
@@ -185,7 +184,7 @@ class IfazPrincipal:
         txtComentarios.grid(row=4, column=1, columnspan=3, sticky="nsew", pady=5, padx=1)
         btnGuardar = ttk.Button(self.FrmNvoPaciente, text="Guardar", command=lambda: self.nuevoPaciente(txtComentarios.get("1.0", 'end-1c')))
         btnGuardar.grid(row=5, column=0, sticky="e")
-        btnSalir = ttk.Button(self.FrmNvoPaciente, text='Cerrar', command=lambda: self.cerrarDialogo(self.dlgNvoPaciente))
+        btnSalir = ttk.Button(self.FrmNvoPaciente, text='Cerrar', command=lambda: self.cerrarDialogo(self.dlgNvoPaciente,self.ventanaPrincipal))
         btnSalir.grid(row=5, column=1, sticky="w")
         def habilitarModificacion():
             if (self.habilitado == 0):
@@ -246,7 +245,7 @@ class IfazPrincipal:
             pacienteSel = self.pacientes.consulta("SELECT * FROM pacientes WHERE id_paciente="+idPacienteSel)
             self.dlgIfzSesiones = Toplevel()
             #Hacemos que el protocolo de cierre de dialogo llame al metodo CerrarDialogo
-            self.dlgIfzSesiones.protocol("WM_DELETE_WINDOW", lambda: self.cerrarDialogo(self.dlgIfzSesiones))
+            self.dlgIfzSesiones.protocol("WM_DELETE_WINDOW", lambda: self.cerrarDialogo(self.dlgIfzSesiones,self.ventanaPrincipal))
             self.dlgIfzSesiones.resizable(0, 0)
             self.FrmifazSesiones = ttk.LabelFrame(self.dlgIfzSesiones, text="Sesiones del paciente - "+pacienteSel[0][1]+" "+pacienteSel[0][2])
             self.FrmifazSesiones.pack(expand=True, fill=BOTH)
@@ -265,7 +264,7 @@ class IfazPrincipal:
             self.scllPaciente = ttk.Scrollbar(self.FrmifazSesiones, command=self.treeifazSesiones.yview)
             self.scllPaciente.grid(row=1, column=4, sticky="nsew")
             self.treeifazSesiones.config(yscrollcommand=self.scllPaciente.set)
-            btnCerrar = ttk.Button(self.FrmifazSesiones, text='Cerrar', command=lambda: self.cerrarDialogo(self.dlgIfzSesiones))
+            btnCerrar = ttk.Button(self.FrmifazSesiones, text='Cerrar', command=lambda: self.cerrarDialogo(self.dlgIfzSesiones,self.ventanaPrincipal))
             btnCerrar.grid(row=5, column=1)
             self.listaSesiones = self.sesiones.consulta("SELECT pacientes.nombre,pacientes.apellido,sesiones.inicio,sesiones.fin,sesiones.notas FROM pacientes INNER JOIN sesiones ON pacientes.id_paciente=sesiones.id_paciente WHERE pacientes.id_paciente="+idPacienteSel+" ORDER BY sesiones.inicio DESC;")
             for entrada in self.treeifazSesiones.get_children():

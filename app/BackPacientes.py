@@ -4,9 +4,9 @@ class Paciente:
     def __init__(self):
         pass
 
-    def alta(self, nombre, apellido, email, tel, notas):
+    def alta(self, nombre, apellido, email, tel, notas, usuario):
         try:
-            B.query('INSERT INTO pacientes (nombre,apellido,mail,telefono,notas) VALUES ("'+nombre+'","'+apellido+'","'+email+'","'+tel+'","'+notas+'");')
+            B.query('INSERT INTO pacientes (nombre,apellido,mail,telefono,notas,usuario) VALUES ("'+nombre+'","'+apellido+'","'+email+'","'+tel+'","'+notas+'","'+usuario+'");')
         except:
             pass
 

@@ -11,7 +11,7 @@ import FrontEnd as F
 class Aplicacion():
     def __init__(self):
         self.raiz = Tk()
-        self.raiz.title("Login")
+        self.raiz.title("APPSico - El Bosque")
         logo = PhotoImage(file="app/APPsico.png")
         Label(self.raiz, compound = CENTER, text="", image=logo).pack(side=TOP, fill=BOTH, expand=True, padx=5, pady=5)
         self.raiz.iconbitmap('app/APPsico.ico')
@@ -55,6 +55,7 @@ class Aplicacion():
         try:
             listaUsuarios=B.query("SELECT * FROM usuarios WHERE usuario='"+self.usuario.get()+"'").fetchall()
             if(listaUsuarios[0][1] == self.clave.get()):
+                self.raiz.withdraw()
                 F.IfazPrincipal(self.raiz,self.usuario.get())
                 self.clave.set("")
                 self.raiz.withdraw()

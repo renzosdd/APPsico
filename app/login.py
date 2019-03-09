@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from tkinter import *
-from tkinter import ttk, font
+from tkinter import ttk, messagebox
 import Base as B
 import FrontEnd as F
 
@@ -12,14 +12,11 @@ class Aplicacion():
     def __init__(self):
         self.raiz = Tk()
         self.raiz.title("Login")
-    
-        fuente = font.Font(weight='bold')
-                               
-        self.lblUsuario = ttk.Label(self.raiz, text="Usuario:", 
-                               font=fuente)
-        self.lblClave = ttk.Label(self.raiz, text="Contraseña:", 
-                               font=fuente)
-
+        logo = PhotoImage(file="app/APPsico.png")
+        Label(self.raiz, compound = CENTER, text="", image=logo).pack(side=TOP, fill=BOTH, expand=True, padx=5, pady=5)
+        self.raiz.iconbitmap('app/APPsico.ico')
+        self.lblUsuario = ttk.Label(self.raiz, text="Usuario:")
+        self.lblClave = ttk.Label(self.raiz, text="Contraseña:")
         self.usuario = StringVar()
         self.clave = StringVar()
         
@@ -62,14 +59,16 @@ class Aplicacion():
                 self.clave.set("")
                 self.raiz.withdraw()
             else:
+                messagebox.showinfo("Error", "Usuario o clave invalida - Intentelo nuevamente")
                 self.clave.set("")
                 self.txtClave.focus_set()
         except:
+            messagebox.showinfo("Error", "Usuario o clave invalida - Intentelo nuevamente")
             self.clave.set("")
             self.txtClave.focus_set()
         
 def main():
-    mi_app = Aplicacion()
+    Aplicacion()
     return 0
 
 if __name__ == '__main__':

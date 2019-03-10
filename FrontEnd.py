@@ -42,6 +42,7 @@ class IfazPrincipal:
         #Boton Refrescar
         self.btnRefrescarPacientes = ttk.Button(self.frmIfazPrincipal, text="Reestablecer", command=lambda: self.buscarPaciente(2))
         self.btnRefrescarPacientes.grid(row=0, column=2, pady=5, padx=1, sticky="nsew")
+        ttk.Button(self.frmIfazPrincipal, text="Cerrar Sesion", command=lambda:self.cerrarDialogo(self.ventanaPrincipal,ifazLogin)).grid(row=0,column=3, pady=5, padx=1, sticky="nsew")
         #Lista de Pacientes
         self.treePaciente = ttk.Treeview(self.frmIfazPrincipal, selectmode='browse')
         self.treePaciente.grid(row=1, column=0, columnspan=4)

@@ -3,7 +3,7 @@
 
 from tkinter import *
 from tkinter import ttk, messagebox
-import Base as B
+import BackEnd as B
 import FrontEnd as F
 
 # Gestor de geometría (pack)
@@ -58,7 +58,6 @@ class Aplicacion():
                 self.raiz.withdraw()
                 F.IfazPrincipal(self.raiz,self.usuario.get().lower())
                 self.clave.set("")
-                self.raiz.withdraw()
             else:
                 messagebox.showinfo("Error", "Usuario o clave invalida - Intentelo nuevamente")
                 self.clave.set("")

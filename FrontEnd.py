@@ -3,11 +3,12 @@ from tkinter import ttk
 from tkinter import scrolledtext as st
 from tkinter.ttk import *
 import sys
-import BackPacientes as P
-import BackSesiones as S
+import BackEnd as B
 from tkinter import messagebox
 import ClickDerecho as D
 from sys import platform as _platform
+
+
 
 class IfazPrincipal:
     def __init__(self, ifazLogin,usuario):
@@ -16,8 +17,8 @@ class IfazPrincipal:
         self.ventanaPrincipal.iconbitmap('APPsico.ico')
         self.ventanaPrincipal.resizable(0, 0)
         self.ventanaPrincipal.protocol("WM_DELETE_WINDOW", lambda: self.cerrarDialogo(self.ventanaPrincipal,ifazLogin))
-        self.pacientes = P.Paciente()
-        self.sesiones=S.Sesion()
+        self.pacientes = B.Paciente()
+        self.sesiones=B.Sesion()
         self.usuario=usuario
         self.ventanas = 0
         self.frmIfazPrincipal = ttk.LabelFrame(self.ventanaPrincipal, text="Pacientes")
@@ -26,9 +27,9 @@ class IfazPrincipal:
         #Campo de busqueda
         self.txtBuscarPaciente = Entry(self.frmIfazPrincipal,textvariable=self.busqueda)
         if _platform == "linux" or _platform == "linux2" or _platform == "win32" or _platform == "win64":
-            self.txtBuscarPaciente.bind('<Button-3>',D.clickDerecho, add='')
+            self.txtBuscarPaciente.bind('<Button-3>',clickDerecho, add='')
         elif _platform == "darwin":
-            self.txtBuscarPaciente.bind('<Button-2>',D.clickDerecho, add='')
+            self.txtBuscarPaciente.bind('<Button-2>',clickDerecho, add='')
         self.txtBuscarPaciente.grid(row=0, column=0, pady=5, padx=1, sticky="ew")
         self.txtBuscarPaciente.config(width=45)
         #Boton Buscar
@@ -162,27 +163,27 @@ class IfazPrincipal:
         lblNombre = Label(self.FrmNvoPaciente, text="Nombre: ")
         lblNombre.grid(row=0, column=0, sticky="e", pady=5, padx=1)
         txtNombre = Entry(self.FrmNvoPaciente, textvariable=self.nombre)
-        txtNombre.bind('<Button-3>',D.clickDerecho, add='')
+        txtNombre.bind('<Button-3>',clickDerecho, add='')
         txtNombre.grid(row=0, column=1, pady=5, sticky="we")
         lblApellido = Label(self.FrmNvoPaciente, text="Apellido: ")
         lblApellido.grid(row=1, column=0, sticky="e", pady=5, padx=1)
         txtApellido = Entry(self.FrmNvoPaciente, textvariable=self.apellido)
-        txtApellido.bind('<Button-3>',D.clickDerecho, add='')
+        txtApellido.bind('<Button-3>',clickDerecho, add='')
         txtApellido.grid(row=1, column=1, pady=5, sticky="we")
         lblMail = Label(self.FrmNvoPaciente, text="Correo: ")
         lblMail.grid(row=2, column=0, sticky="e", pady=5, padx=1)
         txtMail = Entry(self.FrmNvoPaciente, textvariable=self.email)
-        txtMail.bind('<Button-3>',D.clickDerecho, add='')
+        txtMail.bind('<Button-3>',clickDerecho, add='')
         txtMail.grid(row=2, column=1, pady=5, sticky="we")
         lblTel = Label(self.FrmNvoPaciente, text="Telefono: ")
         lblTel.grid(row=3, column=0, sticky="e", pady=5, padx=1)
         txtTel = Entry(self.FrmNvoPaciente, textvariable=self.telefono)
-        txtTel.bind('<Button-3>',D.clickDerecho, add='')
+        txtTel.bind('<Button-3>',clickDerecho, add='')
         txtTel.grid(row=3, column=1, pady=5, sticky="we")
         lblComentarios = Label(self.FrmNvoPaciente, text="Notas: ")
         lblComentarios.grid(row=4, column=0, sticky="e", pady=5, padx=1)
         txtComentarios = st.ScrolledText(self.FrmNvoPaciente, height=10, width=40)
-        txtComentarios.bind('<Button-3>',D.clickDerecho, add='')
+        txtComentarios.bind('<Button-3>',clickDerecho, add='')
         txtComentarios.grid(row=4, column=1, columnspan=3, sticky="nsew", pady=5, padx=1)
         btnGuardar = ttk.Button(self.FrmNvoPaciente, text="Guardar", command=lambda: self.nuevoPaciente(txtComentarios.get("1.0", 'end-1c')))
         btnGuardar.grid(row=5, column=0, sticky="e")
@@ -276,3 +277,50 @@ class IfazPrincipal:
                 self.treeifazSesiones.insert('', 'end', text=sesion[2][6:8]+"/"+sesion[2][4:6]+"/"+sesion[2][0:4], values=(sesion[2][8:],sesion[3][8:],sesion[4]))
         else:
             messagebox.showinfo("Error", "No se seleccionó ningún paciente")
+
+def clickDerecho(e):
+    try:
+        def copiar(e, apnd=0):
+            e.widget.event_generate('<Control-c>')
+
+        def cortar(e):
+            e.widget.event_generate('<Control-x>')
+
+        def pegar(e):
+            e.widget.event_generate('<Control-v>')
+
+        e.widget.focus()
+
+        nclst=[
+               (' Cortar', lambda e=e: cortar(e)),
+               (' Copiar', lambda e=e: copiar(e)),
+               (' Pegar', lambda e=e: pegar(e)),
+               ]
+
+        rmenu = Menu(None, tearoff=0, takefocus=0)
+
+        for (txt, cmd) in nclst:
+            rmenu.add_command(label=txt, command=cmd)
+
+        rmenu.tk_popup(e.x_root+40, e.y_root+10,entry="0")
+
+    except:
+        print('Algo Salio mal')
+        pass
+
+    return "break"
+
+
+def menuClickDerecho(r):
+
+    try:
+        if _platform == "linux" or _platform == "linux2" or _platform == "win32" or _platform == "win64":
+            for b in [ 'Text', 'Entry', 'Listbox', 'Label']: #
+                r.bind_class(b, sequence='<Button-3>', func=clickDerecho, add='')
+        elif _platform == "darwin":
+            for b in [ 'Text', 'Entry', 'Listbox', 'Label']: #
+                r.bind_class(b, sequence='<Button-2>', func=clickDerecho, add='')
+    except:
+        print (' - menuClickDerecho, something wrong')
+        pass
+

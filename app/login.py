@@ -53,10 +53,10 @@ class Aplicacion():
     
     def aceptar(self):
         try:
-            listaUsuarios=B.query("SELECT * FROM usuarios WHERE usuario='"+self.usuario.get()+"'").fetchall()
+            listaUsuarios=B.query("SELECT * FROM usuarios WHERE usuario='"+self.usuario.get().lower()+"'").fetchall()
             if(listaUsuarios[0][1] == self.clave.get()):
                 self.raiz.withdraw()
-                F.IfazPrincipal(self.raiz,self.usuario.get())
+                F.IfazPrincipal(self.raiz,self.usuario.get().lower())
                 self.clave.set("")
                 self.raiz.withdraw()
             else:

@@ -57,7 +57,7 @@ class Sesion:
 
     def baja(self, id_sesion):
         try:
-            query('DELETE FROM sesiones WHERE id_sesion = '+id_sesion+';')
+            query("DELETE FROM sesiones WHERE id_sesion = '"+id_sesion+"';")
         except:
             pass
 

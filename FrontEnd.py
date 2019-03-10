@@ -6,6 +6,7 @@ import sys
 from sys import platform as _platform
 import BackEnd as B
 from tkcalendar import Calendar, DateEntry
+from datetime import datetime,time,date
 
 class IfazPrincipal:
     def __init__(self, ifazLogin,usuario):
@@ -226,8 +227,6 @@ class IfazPrincipal:
             btnModificarPacientes = ttk.Button(self.FrmNvoPaciente, text='Modificar', command=habilitarModificacion)
             btnModificarPacientes.grid(row=5, column=2, sticky="ew")
             #Boton para enviar los cambios a la base
-            #btnGuardar = ttk.Button(self.FrmNvoPaciente, text="Guardar", command=lambda: self.modificarPacientes(paciente_sel[0], txtComentarios.get("1.0", 'end-1c')))
-            #btnGuardar.grid(row=5, column=0, sticky="e")
             btnGuardar.config(command=lambda: self.modificarPacientes(paciente_sel[0], txtComentarios.get("1.0", 'end-1c')))
             txtNombre.config(state='disabled')
             txtApellido.config(state='disabled')
@@ -280,7 +279,44 @@ class IfazPrincipal:
             for entrada in self.treeifazSesiones.get_children():
                 self.treeifazSesiones.delete(entrada)
             for sesion in self.listaSesiones:
-                self.treeifazSesiones.insert('', 'end', text=sesion[2][6:8]+"/"+sesion[2][4:6]+"/"+sesion[2][0:4], values=(sesion[2][8:],sesion[3][8:],sesion[4]), iid=sesion[5])
+                self.treeifazSesiones.insert('', 'end', text=sesion[2][8:10]+"-"+sesion[2][5:7]+"-"+sesion[2][0:4], values=(sesion[2][11:],sesion[3][11:],sesion[4]), iid=sesion[5])
+
+    def nuevaSesion(self, fechainicio,horainicio, minutosinicio, fechafin, horafin, minutosfin, notas, idPacienteSel):
+        try:
+            Hinicio=time(int(horainicio),int(minutosinicio))
+            Hfin=time(int(horafin),int(minutosfin))
+            FHinicio=str(fechainicio) + " " + str(Hinicio)
+            FHfin=str(fechafin) + " " + str(Hfin)
+            self.sesiones.alta(str(notas),FHinicio,FHfin,str(idPacienteSel))
+            self.recargarSesiones(idPacienteSel)
+            self.cerrarDialogo(self.dlgIfazSesion,self.dlgIfzSesiones)
+        except:
+            messagebox.showerror("Error","No se pudo crear")
+
+    def modificarSesion(self, fechainicio,horainicio, minutosinicio, fechafin, horafin, minutosfin, notas, idSesionSel,idPacienteSel):
+        try:
+            Hinicio=time(int(horainicio),int(minutosinicio))
+            Hfin=time(int(horafin),int(minutosfin))
+            FHinicio=str(fechainicio) + " " + str(Hinicio)
+            FHfin=str(fechafin) + " " + str(Hfin)
+            self.sesiones.modificar(str(idSesionSel),notas,FHinicio,FHfin)
+            self.recargarSesiones(idPacienteSel)
+            self.cerrarDialogo(self.dlgIfazSesion,self.dlgIfzSesiones)
+        except:
+            messagebox.showinfo("Error al modificar el paciente", "No se pudo modificar")
+
+    def eliminarSesion(self,idSesionSel,idPacienteSel):
+        resultado = messagebox.askquestion("Eliminar", "¿Esta seguro que desea eliminar la sesión?", icon='warning')
+        if resultado == 'yes':
+            try:
+                self.sesiones.baja(str(idSesionSel))
+                messagebox.showinfo("Éxito","Se elimino correctamente")
+                self.recargarSesiones(idPacienteSel)
+                self.cerrarDialogo(self.dlgIfazSesion,self.dlgIfzSesiones)
+            except:
+                messagebox.showinfo("Error","No se pudo eliminar")
+        else:
+            pass
 
     def ifazSesion(self, idPacienteSel, *kargs):
         #Comprobamos si se seleccionó alguna sesion
@@ -300,7 +336,7 @@ class IfazPrincipal:
         self.FrmIfazSesion.pack(expand=True, fill=BOTH)
 
         ttk.Label(self.FrmIfazSesion, text='Inicio: ').grid(row=0,column=0, pady=5, padx=1, sticky="e")
-        fechaInicio = DateEntry(self.FrmIfazSesion, width=12, background='green',foreground='white', borderwidth=2)
+        fechaInicio = DateEntry(self.FrmIfazSesion, width=12, background='green',foreground='white', borderwidth=2, locale='es_UY')
         fechaInicio.grid(row=0,column=1, pady=5, padx=1)
 
         spinboxHoraInicio=ttk.Spinbox(self.FrmIfazSesion, from_=00, to=23, width=5)
@@ -308,11 +344,9 @@ class IfazPrincipal:
         ttk.Label(self.FrmIfazSesion, text=":").grid(row=0,column=2, pady=5, padx=1)
         spinboxMinInicio=ttk.Spinbox(self.FrmIfazSesion, from_=00, to=59, width=5)
         spinboxMinInicio.grid(row=0, column=2, pady=5, padx=1, sticky="e")
-
         ttk.Label(self.FrmIfazSesion, text='Fin: ').grid(row=1,column=0, pady=5, padx=1, sticky="e")
-        fechaFin = DateEntry(self.FrmIfazSesion, width=12, background='green',foreground='white', borderwidth=2)
+        fechaFin = DateEntry(self.FrmIfazSesion, width=12, background='green',foreground='white', borderwidth=2, locale='es_UY')
         fechaFin.grid(row=1,column=1, pady=5, padx=1)
-
         spinboxHoraFin=ttk.Spinbox(self.FrmIfazSesion, from_=00, to=23, width=5)
         spinboxHoraFin.grid(row=1, column=2, pady=5, padx=1, sticky="w")
         ttk.Label(self.FrmIfazSesion, text=":").grid(row=1,column=2, pady=5, padx=1)
@@ -325,15 +359,20 @@ class IfazPrincipal:
         txtComentarios.bind('<Button-3>',clickDerecho, add='')
         txtComentarios.grid(row=2, column=1, columnspan=4, sticky="nsew", pady=5, padx=1)
 
-
-
-        btnGuardar = ttk.Button(self.FrmIfazSesion, text="Guardar")
+        btnGuardar = ttk.Button(self.FrmIfazSesion, text="Guardar",command=lambda: self.nuevaSesion(fechaInicio.get_date(),spinboxHoraInicio.get(), spinboxMinInicio.get(), fechaFin.get_date(), spinboxHoraFin.get(), spinboxMinFin.get(),txtComentarios.get("1.0", 'end-1c'),idPacienteSel))
         btnGuardar.grid(row=5, column=0, sticky="e")
         btnSalir = ttk.Button(self.FrmIfazSesion, text='Cerrar', command=lambda: self.cerrarDialogo(self.dlgIfazSesion,self.dlgIfzSesiones))
         btnSalir.grid(row=5, column=1, sticky="w")
         def habilitarModificacion():
             if (self.habilitado == 0):
                 self.FrmIfazSesion.config(text="Modificar Sesion")
+                spinboxHoraFin.config(state='normal')
+                spinboxMinFin.config(state='normal')
+                spinboxHoraInicio.config(state='normal')
+                spinboxMinInicio.config(state='normal')
+                fechaInicio.config(state='normal')
+                fechaFin.config(state='normal')
+                txtComentarios.config(state='normal')
                 btnGuardar.config(state='normal')
                 btnEliminarSesion.config(state='enabled')
                 btnModificarSesion.config(state='enabled')
@@ -341,59 +380,73 @@ class IfazPrincipal:
                 self.habilitado = 1
             else:
                 self.FrmIfazSesion.config(text="Visualizar Sesion")
+                spinboxHoraFin.config(state='disabled')
+                spinboxMinFin.config(state='disabled')
+                spinboxHoraInicio.config(state='disabled')
+                spinboxMinInicio.config(state='disabled')
+                fechaInicio.config(state='disabled')
+                fechaFin.config(state='disabled')
+                txtComentarios.config(state='disabled')
                 btnGuardar.config(state='disabled')
                 btnEliminarSesion.config(state='disabled')
                 btnModificarSesion.config(text="Modificar")
                 self.habilitado = 0
         if(kargs):
             idSesionSel=kargs[0]
+            sesion_sel = B.query("SELECT * FROM sesiones WHERE id_sesion='"+str(idSesionSel)+"';").fetchall()[0]  
+            fInicio=date(int(sesion_sel[2][0:4]),int(sesion_sel[2][5:7]),int(sesion_sel[2][8:10]))
+            fFin=date(int(sesion_sel[3][0:4]),int(sesion_sel[3][5:7]),int(sesion_sel[3][8:10]))
+            spinboxHoraFin.set(int(sesion_sel[3][11:13]))
+            spinboxMinFin.set(int(sesion_sel[3][14:16]))
+            spinboxHoraInicio.set(int(sesion_sel[2][11:13]))
+            spinboxMinInicio.set(int(sesion_sel[2][14:16]))
+            fechaInicio.set_date(fInicio)
+            fechaFin.set_date(fFin)
+            txtComentarios.insert("insert", sesion_sel[1])
             #Cambio el titulo del frame
             self.FrmIfazSesion.config(text="Visualizar Sesion")
+            spinboxHoraFin.config(state='disabled')
+            spinboxMinFin.config(state='disabled')
+            spinboxHoraInicio.config(state='disabled')
+            spinboxMinInicio.config(state='disabled')
+            fechaInicio.config(state='disabled')
+            fechaFin.config(state='disabled')
+            txtComentarios.config(state='disabled')
+            btnGuardar.config(state='disabled')
             #Boton Eliminar Paciente
-            btnEliminarSesion = ttk.Button(self.FrmIfazSesion, text='Eliminar Sesion')
+            btnEliminarSesion = ttk.Button(self.FrmIfazSesion, text='Eliminar Sesion',command=lambda: self.eliminarSesion(idSesionSel,idPacienteSel))
             btnEliminarSesion.grid(row=5, column=3, sticky="ew")
+            btnEliminarSesion.config(state='disabled')
             #Boton habilitar modificacion
             btnModificarSesion = ttk.Button(self.FrmIfazSesion, text='Modificar', command=habilitarModificacion)
             btnModificarSesion.grid(row=5, column=2, sticky="ew")
-
             #para modificar el boton guardar
-            #btnGuardar.config(command=lambda: self.modificarPacientes(paciente_sel[0], txtComentarios.get("1.0", 'end-1c')))
+            btnGuardar.config(command=lambda: self.modificarSesion(fechaInicio.get_date(),spinboxHoraInicio.get(), spinboxMinInicio.get(), fechaFin.get_date(), spinboxHoraFin.get(), spinboxMinFin.get(),txtComentarios.get("1.0", 'end-1c'),idSesionSel,idPacienteSel))
             btnGuardar.config(state='disabled')
-            btnEliminarSesion.config(state='disabled')
 
 def clickDerecho(e):
     try:
         def copiar(e, apnd=0):
             e.widget.event_generate('<Control-c>')
-
         def cortar(e):
             e.widget.event_generate('<Control-x>')
-
         def pegar(e):
             e.widget.event_generate('<Control-v>')
-
         e.widget.focus()
-
         nclst=[
                (' Cortar', lambda e=e: cortar(e)),
                (' Copiar', lambda e=e: copiar(e)),
                (' Pegar', lambda e=e: pegar(e)),
                ]
-
         rmenu = Menu(None, tearoff=0, takefocus=0)
-
         for (txt, cmd) in nclst:
             rmenu.add_command(label=txt, command=cmd)
-
         rmenu.tk_popup(e.x_root+40, e.y_root+10,entry="0")
-
     except:
         pass
-
-    return "break"
+    return
 
 def menuClickDerecho(r):
-
     try:
         if _platform == "linux" or _platform == "linux2" or _platform == "win32" or _platform == "win64":
             for b in [ 'Text', 'Entry', 'Listbox', 'Label']: #
@@ -402,9 +455,7 @@ def menuClickDerecho(r):
             for b in [ 'Text', 'Entry', 'Listbox', 'Label']: #
                 r.bind_class(b, sequence='<Button-2>', func=clickDerecho, add='')
     except:
-        print (' - menuClickDerecho, something wrong')
         pass
-
 
 class Aplicacion():
     def __init__(self):
@@ -418,34 +469,20 @@ class Aplicacion():
         self.usuario = StringVar()
         self.clave = StringVar()
         
-        self.txtUsuario = ttk.Entry(self.raiz, 
-                                textvariable=self.usuario, 
-                                width=30)
-        self.txtClave = ttk.Entry(self.raiz, 
-                                textvariable=self.clave, 
-                                width=30, show="*")
+        self.txtUsuario = ttk.Entry(self.raiz, textvariable=self.usuario, width=30)
+        self.txtClave = ttk.Entry(self.raiz, textvariable=self.clave, width=30, show="*")
         self.separador = ttk.Separator(self.raiz, orient=HORIZONTAL)
-        
-        self.btnAceptar = ttk.Button(self.raiz, text="Aceptar", 
-                                 command=self.aceptar)
-        self.btnCancelar = ttk.Button(self.raiz, text="Cancelar", 
-                                 command=quit)
-                                         
-        self.lblUsuario.pack(side=TOP, fill=BOTH, expand=True, 
-                        padx=5, pady=5)
-        self.txtUsuario.pack(side=TOP, fill=X, expand=True, 
-                         padx=5, pady=5)
-        self.lblClave.pack(side=TOP, fill=BOTH, expand=True, 
-                        padx=5, pady=5)
-        self.txtClave.pack(side=TOP, fill=X, expand=True, 
-                         padx=5, pady=5)
-        self.separador.pack(side=TOP, fill=BOTH, expand=True, 
-                         padx=5, pady=5)
-        self.btnAceptar.pack(side=LEFT, fill=BOTH, expand=True, 
-                         padx=5, pady=5)
-        self.btnCancelar.pack(side=RIGHT, fill=BOTH, expand=True, 
-                         padx=5, pady=5)
-        
+        self.btnAceptar = ttk.Button(self.raiz, text="Aceptar", command=self.aceptar)
+        self.btnCancelar = ttk.Button(self.raiz, text="Cancelar", command=quit)
+                               
+        self.lblUsuario.pack(side=TOP, fill=BOTH, expand=True, padx=5, pady=5)
+        self.txtUsuario.pack(side=TOP, fill=X, expand=True, padx=5, pady=5)
+        self.lblClave.pack(side=TOP, fill=BOTH, expand=True, padx=5, pady=5)
+        self.txtClave.pack(side=TOP, fill=X, expand=True, padx=5, pady=5)
+        self.separador.pack(side=TOP, fill=BOTH, expand=True, padx=5, pady=5)
+        self.btnAceptar.pack(side=LEFT, fill=BOTH, expand=True, padx=5, pady=5)
+        self.btnCancelar.pack(side=RIGHT, fill=BOTH, expand=True, padx=5, pady=5)
+
         self.txtUsuario.focus_set()
         self.raiz.mainloop()
     

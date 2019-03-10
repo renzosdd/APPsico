@@ -284,7 +284,6 @@ class IfazPrincipal:
     def ifazSesion(self, idPacienteSel, *kargs):
         #Comprobamos si se seleccionó alguna sesion
         if (kargs and kargs[0]==''):
-            #self.cerrarDialogo(self.dlgIfazSesion,self.dlgIfzSesiones)
             messagebox.showinfo("Error", "No se seleccionó ningúna sesion")
             return
         self.habilitado = 0

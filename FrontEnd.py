@@ -5,6 +5,7 @@ from tkinter.ttk import *
 import sys
 from sys import platform as _platform
 import BackEnd as B
+from tkcalendar import Calendar, DateEntry
 
 class IfazPrincipal:
     def __init__(self, ifazLogin,usuario):
@@ -297,6 +298,35 @@ class IfazPrincipal:
         self.dlgIfazSesion.iconbitmap('APPsico.ico')
         self.FrmIfazSesion = ttk.LabelFrame(self.dlgIfazSesion, text="Nueva Sesion")
         self.FrmIfazSesion.pack(expand=True, fill=BOTH)
+
+        ttk.Label(self.FrmIfazSesion, text='Inicio: ').grid(row=0,column=0, pady=5, padx=1, sticky="e")
+        fechaInicio = DateEntry(self.FrmIfazSesion, width=12, background='green',foreground='white', borderwidth=2)
+        fechaInicio.grid(row=0,column=1, pady=5, padx=1)
+
+        spinboxHoraInicio=ttk.Spinbox(self.FrmIfazSesion, from_=00, to=23, width=5)
+        spinboxHoraInicio.grid(row=0, column=2, pady=5, padx=1, sticky="w")
+        ttk.Label(self.FrmIfazSesion, text=":").grid(row=0,column=2, pady=5, padx=1)
+        spinboxMinInicio=ttk.Spinbox(self.FrmIfazSesion, from_=00, to=59, width=5)
+        spinboxMinInicio.grid(row=0, column=2, pady=5, padx=1, sticky="e")
+
+        ttk.Label(self.FrmIfazSesion, text='Fin: ').grid(row=1,column=0, pady=5, padx=1, sticky="e")
+        fechaFin = DateEntry(self.FrmIfazSesion, width=12, background='green',foreground='white', borderwidth=2)
+        fechaFin.grid(row=1,column=1, pady=5, padx=1)
+
+        spinboxHoraFin=ttk.Spinbox(self.FrmIfazSesion, from_=00, to=23, width=5)
+        spinboxHoraFin.grid(row=1, column=2, pady=5, padx=1, sticky="w")
+        ttk.Label(self.FrmIfazSesion, text=":").grid(row=1,column=2, pady=5, padx=1)
+        spinboxMinFin=ttk.Spinbox(self.FrmIfazSesion, from_=00, to=59, width=5)
+        spinboxMinFin.grid(row=1, column=2, pady=5, padx=1, sticky="e")
+
+        lblComentarios = Label(self.FrmIfazSesion, text="Notas: ")
+        lblComentarios.grid(row=2, column=0, pady=5, padx=1, sticky="e")
+        txtComentarios = st.ScrolledText(self.FrmIfazSesion, height=15, width=60)
+        txtComentarios.bind('<Button-3>',clickDerecho, add='')
+        txtComentarios.grid(row=2, column=1, columnspan=4, sticky="nsew", pady=5, padx=1)
+
+
+
         btnGuardar = ttk.Button(self.FrmIfazSesion, text="Guardar")
         btnGuardar.grid(row=5, column=0, sticky="e")
         btnSalir = ttk.Button(self.FrmIfazSesion, text='Cerrar', command=lambda: self.cerrarDialogo(self.dlgIfazSesion,self.dlgIfzSesiones))

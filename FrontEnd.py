@@ -4,9 +4,15 @@ from tkinter import scrolledtext as st
 from tkinter.ttk import *
 import sys
 from sys import platform as _platform
+import platform
 import BackEnd as B
 from tkcalendar import Calendar, DateEntry
 from datetime import datetime,time,date
+
+if platform.system() == 'Darwin':
+    import locale
+    if locale.getlocale()[0] is None:
+        locale.setlocale(locale.LC_ALL,'es_LA.UTF-8')
 
 class IfazPrincipal:
     def __init__(self, ifazLogin,usuario):

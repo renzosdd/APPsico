@@ -264,15 +264,65 @@ class IfazPrincipal:
             self.scllPaciente = ttk.Scrollbar(self.FrmifazSesiones, command=self.treeifazSesiones.yview)
             self.scllPaciente.grid(row=1, column=4, sticky="nsew")
             self.treeifazSesiones.config(yscrollcommand=self.scllPaciente.set)
+            btnNuevaSesion=ttk.Button(self.FrmifazSesiones,text='Nueva Sesion',command=lambda:self.ifazSesion(idPacienteSel,"a") )
+            btnNuevaSesion.grid(row=5, column=0, sticky="ew")
             btnCerrar = ttk.Button(self.FrmifazSesiones, text='Cerrar', command=lambda: self.cerrarDialogo(self.dlgIfzSesiones,self.ventanaPrincipal))
-            btnCerrar.grid(row=5, column=1)
+            btnCerrar.grid(row=5, column=3, sticky="ew")
+            self.recargarSesiones(idPacienteSel)
+        else:
+            messagebox.showinfo("Error", "No se seleccionó ningún paciente")
+
+    def recargarSesiones(self,idPacienteSel):
             self.listaSesiones = self.sesiones.consulta("SELECT pacientes.nombre,pacientes.apellido,sesiones.inicio,sesiones.fin,sesiones.notas FROM pacientes INNER JOIN sesiones ON pacientes.id_paciente=sesiones.id_paciente WHERE pacientes.id_paciente="+idPacienteSel+" ORDER BY sesiones.inicio DESC;")
             for entrada in self.treeifazSesiones.get_children():
                 self.treeifazSesiones.delete(entrada)
             for sesion in self.listaSesiones:
                 self.treeifazSesiones.insert('', 'end', text=sesion[2][6:8]+"/"+sesion[2][4:6]+"/"+sesion[2][0:4], values=(sesion[2][8:],sesion[3][8:],sesion[4]))
-        else:
-            messagebox.showinfo("Error", "No se seleccionó ningún paciente")
+
+    def ifazSesion(self, idPacienteSel, *kargs):
+        self.habilitado = 0
+        #Ocultamos la ventanaPrincipal mientras esta el dialogo abierto
+        self.dlgIfzSesiones.withdraw()
+        #Creamos una ventana
+        self.dlgIfazSesion = Toplevel()
+        #Hacemos que el protocolo de cierre de dialogo llame al metodo CerrarDialogo
+        self.dlgIfazSesion.protocol("WM_DELETE_WINDOW", lambda: self.cerrarDialogo(self.dlgIfazSesion,self.dlgIfzSesiones))
+        self.dlgIfazSesion.resizable(0,0)
+        self.dlgIfazSesion.iconbitmap('APPsico.ico')
+        self.FrmIfazSesion = ttk.LabelFrame(self.dlgIfazSesion, text="Nueva Sesion")
+        self.FrmIfazSesion.pack(expand=True, fill=BOTH)
+        btnGuardar = ttk.Button(self.FrmIfazSesion, text="Guardar")
+        btnGuardar.grid(row=5, column=0, sticky="e")
+        btnSalir = ttk.Button(self.FrmIfazSesion, text='Cerrar', command=lambda: self.cerrarDialogo(self.dlgIfazSesion,self.dlgIfzSesiones))
+        btnSalir.grid(row=5, column=1, sticky="w")
+        def habilitarModificacion():
+            if (self.habilitado == 0):
+                self.FrmIfazSesion.config(text="Modificar Sesion")
+                btnGuardar.config(state='normal')
+                btnEliminarSesion.config(state='enabled')
+                btnModificarSesion.config(state='enabled')
+                btnModificarSesion.config(text="Visualizar")
+                self.habilitado = 1
+            else:
+                self.FrmIfazSesion.config(text="Visualizar Sesion")
+                btnGuardar.config(state='disabled')
+                btnEliminarSesion.config(state='disabled')
+                btnModificarSesion.config(text="Modificar")
+                self.habilitado = 0
+        if (kargs):
+            #Cambio el titulo del frame
+            self.FrmIfazSesion.config(text="Visualizar Sesion")
+            #Boton Eliminar Paciente
+            btnEliminarSesion = ttk.Button(self.FrmIfazSesion, text='Eliminar Sesion')
+            btnEliminarSesion.grid(row=5, column=3, sticky="ew")
+            #Boton habilitar modificacion
+            btnModificarSesion = ttk.Button(self.FrmIfazSesion, text='Modificar', command=habilitarModificacion)
+            btnModificarSesion.grid(row=5, column=2, sticky="ew")
+
+            #para modificar el boton guardar
+            #btnGuardar.config(command=lambda: self.modificarPacientes(paciente_sel[0], txtComentarios.get("1.0", 'end-1c')))
+            btnGuardar.config(state='disabled')
+            btnEliminarSesion.config(state='disabled')
 
 def clickDerecho(e):
     try:
@@ -301,11 +351,9 @@ def clickDerecho(e):
         rmenu.tk_popup(e.x_root+40, e.y_root+10,entry="0")
 
     except:
-        print('Algo Salio mal')
         pass
 
     return "break"
-
 
 def menuClickDerecho(r):
 

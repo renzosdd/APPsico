@@ -1,7 +1,7 @@
 import sqlite3
 
 #Metodo para crear la conexion a la base de datos
-con = sqlite3.connect('app/APPSico.db')
+con = sqlite3.connect('APPSico.db')
 
 def query(sql):
         with con:

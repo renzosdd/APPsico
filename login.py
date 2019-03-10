@@ -12,9 +12,9 @@ class Aplicacion():
     def __init__(self):
         self.raiz = Tk()
         self.raiz.title("APPSico - El Bosque")
-        logo = PhotoImage(file="app/APPsico.png")
+        logo = PhotoImage(file="APPsico.png")
         Label(self.raiz, compound = CENTER, text="", image=logo).pack(side=TOP, fill=BOTH, expand=True, padx=5, pady=5)
-        self.raiz.iconbitmap('app/APPsico.ico')
+        self.raiz.iconbitmap('APPsico.ico')
         self.lblUsuario = ttk.Label(self.raiz, text="Usuario:")
         self.lblClave = ttk.Label(self.raiz, text="Contraseña:")
         self.usuario = StringVar()

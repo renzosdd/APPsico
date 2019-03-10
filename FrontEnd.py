@@ -13,7 +13,7 @@ class IfazPrincipal:
     def __init__(self, ifazLogin,usuario):
         self.ventanaPrincipal = Toplevel(ifazLogin)
         self.ventanaPrincipal.title("APPSico - El Bosque")
-        self.ventanaPrincipal.iconbitmap('app/APPsico.ico')
+        self.ventanaPrincipal.iconbitmap('APPsico.ico')
         self.ventanaPrincipal.resizable(0, 0)
         self.ventanaPrincipal.protocol("WM_DELETE_WINDOW", lambda: self.cerrarDialogo(self.ventanaPrincipal,ifazLogin))
         self.pacientes = P.Paciente()
@@ -156,7 +156,7 @@ class IfazPrincipal:
         #Hacemos que el protocolo de cierre de dialogo llame al metodo CerrarDialogo
         self.dlgNvoPaciente.protocol("WM_DELETE_WINDOW", lambda: self.cerrarDialogo(self.dlgNvoPaciente,self.ventanaPrincipal))
         self.dlgNvoPaciente.resizable(0,0)
-        self.dlgNvoPaciente.iconbitmap('app/APPsico.ico')
+        self.dlgNvoPaciente.iconbitmap('APPsico.ico')
         self.FrmNvoPaciente = ttk.LabelFrame(self.dlgNvoPaciente, text="Alta paciente")
         self.FrmNvoPaciente.pack(expand=True, fill=BOTH)
         lblNombre = Label(self.FrmNvoPaciente, text="Nombre: ")
@@ -249,7 +249,7 @@ class IfazPrincipal:
             #Hacemos que el protocolo de cierre de dialogo llame al metodo CerrarDialogo
             self.dlgIfzSesiones.protocol("WM_DELETE_WINDOW", lambda: self.cerrarDialogo(self.dlgIfzSesiones,self.ventanaPrincipal))
             self.dlgIfzSesiones.resizable(0, 0)
-            self.dlgIfzSesiones.iconbitmap('app/APPsico.ico')
+            self.dlgIfzSesiones.iconbitmap('APPsico.ico')
             self.FrmifazSesiones = ttk.LabelFrame(self.dlgIfzSesiones, text="Sesiones del paciente - "+pacienteSel[0][1]+" "+pacienteSel[0][2])
             self.FrmifazSesiones.pack(expand=True, fill=BOTH)
             #Lista de Sesiones

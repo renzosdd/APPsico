@@ -12,7 +12,7 @@ from datetime import datetime,time,date
 if platform.system() == 'Darwin':
     import locale
     if locale.getlocale()[0] is None:
-        locale.setlocale(locale.LC_ALL,'es_LA.UTF-8')
+        locale.setlocale(locale.LC_ALL,'es_UY.UTF-8')
 
 class IfazPrincipal:
     def __init__(self, ifazLogin,usuario):

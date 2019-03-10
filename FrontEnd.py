@@ -261,11 +261,13 @@ class IfazPrincipal:
             self.treeifazSesiones.heading("1", text="Hora de inicio", anchor=W)
             self.treeifazSesiones.heading("2", text="Hora de finalización", anchor=W)
             self.treeifazSesiones.heading("3", text="Nota", anchor=W)
-            self.scllPaciente = ttk.Scrollbar(self.FrmifazSesiones, command=self.treeifazSesiones.yview)
-            self.scllPaciente.grid(row=1, column=4, sticky="nsew")
-            self.treeifazSesiones.config(yscrollcommand=self.scllPaciente.set)
-            btnNuevaSesion=ttk.Button(self.FrmifazSesiones,text='Nueva Sesion',command=lambda:self.ifazSesion(idPacienteSel,"a") )
+            self.scllSesiones = ttk.Scrollbar(self.FrmifazSesiones, command=self.treeifazSesiones.yview)
+            self.scllSesiones.grid(row=1, column=4, sticky="nsew")
+            self.treeifazSesiones.config(yscrollcommand=self.scllSesiones.set)
+            btnNuevaSesion=ttk.Button(self.FrmifazSesiones,text='Nueva Sesion',command=lambda:self.ifazSesion(idPacienteSel) )
             btnNuevaSesion.grid(row=5, column=0, sticky="ew")
+            btnVisualizarSesion=ttk.Button(self.FrmifazSesiones,text='Visualizar Sesion',command=lambda:self.ifazSesion(idPacienteSel,self.treeifazSesiones.focus()) )
+            btnVisualizarSesion.grid(row=5, column=1, sticky="ew")
             btnCerrar = ttk.Button(self.FrmifazSesiones, text='Cerrar', command=lambda: self.cerrarDialogo(self.dlgIfzSesiones,self.ventanaPrincipal))
             btnCerrar.grid(row=5, column=3, sticky="ew")
             self.recargarSesiones(idPacienteSel)
@@ -273,13 +275,18 @@ class IfazPrincipal:
             messagebox.showinfo("Error", "No se seleccionó ningún paciente")
 
     def recargarSesiones(self,idPacienteSel):
-            self.listaSesiones = self.sesiones.consulta("SELECT pacientes.nombre,pacientes.apellido,sesiones.inicio,sesiones.fin,sesiones.notas FROM pacientes INNER JOIN sesiones ON pacientes.id_paciente=sesiones.id_paciente WHERE pacientes.id_paciente="+idPacienteSel+" ORDER BY sesiones.inicio DESC;")
+            self.listaSesiones = self.sesiones.consulta("SELECT pacientes.nombre,pacientes.apellido,sesiones.inicio,sesiones.fin,sesiones.notas,sesiones.id_sesion FROM pacientes INNER JOIN sesiones ON pacientes.id_paciente=sesiones.id_paciente WHERE pacientes.id_paciente="+idPacienteSel+" ORDER BY sesiones.inicio DESC;")
             for entrada in self.treeifazSesiones.get_children():
                 self.treeifazSesiones.delete(entrada)
             for sesion in self.listaSesiones:
-                self.treeifazSesiones.insert('', 'end', text=sesion[2][6:8]+"/"+sesion[2][4:6]+"/"+sesion[2][0:4], values=(sesion[2][8:],sesion[3][8:],sesion[4]))
+                self.treeifazSesiones.insert('', 'end', text=sesion[2][6:8]+"/"+sesion[2][4:6]+"/"+sesion[2][0:4], values=(sesion[2][8:],sesion[3][8:],sesion[4]), iid=sesion[5])
 
     def ifazSesion(self, idPacienteSel, *kargs):
+        #Comprobamos si se seleccionó alguna sesion
+        if (kargs and kargs[0]==''):
+            #self.cerrarDialogo(self.dlgIfazSesion,self.dlgIfzSesiones)
+            messagebox.showinfo("Error", "No se seleccionó ningúna sesion")
+            return
         self.habilitado = 0
         #Ocultamos la ventanaPrincipal mientras esta el dialogo abierto
         self.dlgIfzSesiones.withdraw()
@@ -309,7 +316,8 @@ class IfazPrincipal:
                 btnEliminarSesion.config(state='disabled')
                 btnModificarSesion.config(text="Modificar")
                 self.habilitado = 0
-        if (kargs):
+        if(kargs):
+            idSesionSel=kargs[0]
             #Cambio el titulo del frame
             self.FrmIfazSesion.config(text="Visualizar Sesion")
             #Boton Eliminar Paciente

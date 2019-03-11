@@ -9,10 +9,13 @@ import BackEnd as B
 from tkcalendar import Calendar, DateEntry
 from datetime import datetime,time,date
 
-#if _platform == 'darwin':
-#    import locale
-#    if locale.getlocale()[0] is None:
-#        locale.setlocale(locale.LC_ALL,'es_UY.UTF-8')
+if _platform == 'darwin':
+    import locale
+    try:
+        locale.setlocale(locale.LC_ALL,'esp')
+    except:
+        locale.setlocale(locale.LC_ALL, '')
+
 #elif _platform == 'win32':
 #    import locale
     #locale.setlocale(locale.LC_ALL,'es_UY.UTF-8')
@@ -20,7 +23,10 @@ from datetime import datetime,time,date
 #    print (locale.getlocale()[0])
 #    locale.setlocale()
 #    print("win")
-
+#import locale
+#locale.setlocale(locale.LC_ALL, 'esp')  
+#print(locale.getdefaultlocale())
+#print(locale.getlocale()[0])
 #print(_platform)
 class IfazPrincipal:
     def __init__(self, ifazLogin,usuario):
@@ -351,8 +357,11 @@ class IfazPrincipal:
         self.FrmIfazSesion.pack(expand=True, fill=BOTH)
 
         ttk.Label(self.FrmIfazSesion, text='Inicio: ').grid(row=0,column=0, pady=5, padx=1, sticky="e")
-        fechaInicio = DateEntry(self.FrmIfazSesion, width=12, background='green',foreground='white', borderwidth=2)
-        fechaInicio.grid(row=0,column=1, pady=5, padx=1)
+        try:
+            fechaInicio = DateEntry(self.FrmIfazSesion, width=12, background='green',foreground='white', borderwidth=2)
+            fechaInicio.grid(row=0,column=1, pady=5, padx=1)
+        except ValueError:
+            print("Error UTF-8")
 #, locale='es_UY'
         spinboxHoraInicio=ttk.Spinbox(self.FrmIfazSesion, from_=00, to=23, width=5)
         spinboxHoraInicio.grid(row=0, column=2, pady=5, padx=1, sticky="w")
@@ -360,9 +369,12 @@ class IfazPrincipal:
         spinboxMinInicio=ttk.Spinbox(self.FrmIfazSesion, from_=00, to=59, width=5)
         spinboxMinInicio.grid(row=0, column=2, pady=5, padx=1, sticky="e")
         ttk.Label(self.FrmIfazSesion, text='Fin: ').grid(row=1,column=0, pady=5, padx=1, sticky="e")
-        fechaFin = DateEntry(self.FrmIfazSesion, width=12, background='green',foreground='white', borderwidth=2)
+        try:
+            fechaFin = DateEntry(self.FrmIfazSesion, width=12, background='green',foreground='white', borderwidth=2)
 #, locale='es_UY'
-        fechaFin.grid(row=1,column=1, pady=5, padx=1)
+            fechaFin.grid(row=1,column=1, pady=5, padx=1)
+        except ValueError:
+            print("Error UTF-8")
         spinboxHoraFin=ttk.Spinbox(self.FrmIfazSesion, from_=00, to=23, width=5)
         spinboxHoraFin.grid(row=1, column=2, pady=5, padx=1, sticky="w")
         ttk.Label(self.FrmIfazSesion, text=":").grid(row=1,column=2, pady=5, padx=1)

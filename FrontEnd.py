@@ -86,7 +86,10 @@ class IfazPrincipal:
         #Modo busqueda
         if modo == 1:
             busqueda = self.busqueda.get()
-            listapacientes = self.pacientes.consulta("SELECT * FROM pacientes WHERE nombre LIKE '%"+busqueda+"%' OR apellido LIKE '%"+busqueda+"%' OR mail LIKE '%"+busqueda+"%' AND usuario='"+self.usuario+"'")
+            if busqueda == "":
+                listapacientes = self.pacientes.consulta("SELECT * FROM pacientes WHERE usuario='"+self.usuario+"'")
+            else:
+                listapacientes = self.pacientes.consulta("SELECT * FROM pacientes WHERE usuario='"+self.usuario+"' AND (nombre LIKE '%"+busqueda+"%' OR apellido LIKE '%"+busqueda+"%' OR mail LIKE '%"+busqueda+"%')")
         #Modo para encontrar a todos los pacientes
         elif modo == 2:
             listapacientes = self.pacientes.consulta("SELECT * FROM pacientes WHERE usuario='"+self.usuario+"'")
@@ -505,7 +508,7 @@ class Aplicacion():
                 self.clave.set("")
                 self.txtClave.focus_set()
         except:
-            messagebox.showinfo("Error", "Usuario o clave invalida - Intentelo nuevamente")
+            messagebox.showinfo("Error", "Usuario o clave invali    da - Intentelo nuevamente")
             self.clave.set("")
             self.txtClave.focus_set()
         

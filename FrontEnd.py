@@ -9,11 +9,14 @@ import BackEnd as B
 from tkcalendar import Calendar, DateEntry
 from datetime import datetime,time,date
 
-if platform.system() == 'Darwin':
+if _platform == 'darwin':
     import locale
     if locale.getlocale()[0] is None:
         locale.setlocale(locale.LC_ALL,'es_UY.UTF-8')
+elif _platform == 'win32':
+    print("win")
 
+print(_platform)
 class IfazPrincipal:
     def __init__(self, ifazLogin,usuario):
         self.ventanaPrincipal = Toplevel(ifazLogin)

@@ -513,7 +513,7 @@ class Aplicacion():
                 self.clave.set("")
                 self.txtClave.focus_set()
         except:
-            messagebox.showinfo("Error", "Usuario o clave invali    da - Intentelo nuevamente")
+            messagebox.showinfo("Error", "Usuario o clave invalida - Intentelo nuevamente")
             self.clave.set("")
             self.txtClave.focus_set()
         

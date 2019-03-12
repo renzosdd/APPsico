@@ -295,6 +295,11 @@ class IfazPrincipal:
             self.sesiones.alta(str(notas),FHinicio,FHfin,str(idPacienteSel))
             self.recargarSesiones(idPacienteSel)
             self.cerrarDialogo(self.dlgIfazSesion,self.dlgIfzSesiones)
+            try:
+                paciente=self.buscarPaciente(3, str(idPacienteSel))[0]
+                B.envioMail(paciente[3],str(self.usuario),str(FHinicio),str(FHfin))
+            except:
+                pass
         except:
             messagebox.showerror("Error","No se pudo crear")
 

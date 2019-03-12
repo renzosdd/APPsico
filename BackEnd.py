@@ -1,4 +1,7 @@
 import sqlite3
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import smtplib
 
 con = sqlite3.connect('APPSico.db')
 
@@ -65,9 +68,34 @@ class Sesion:
         row = query(sql).fetchall()
         return row
 
-#sesion=Sesion()
-#sesion.modificar("4","Nota Modificada","20190221 2:30:00 PM","20190224 3:55:00 PM")
-#sesion.baja("10")
-#sesion.alta("Es una nota nueva","20190221 2:30:00 PM","20190224 3:55:00 PM","63")
-#for sesion in sesion.consulta("SELECT * FROM sesiones"):
-#    print(sesion)
+class envioMail:
+    def __init__(self,destinatario,profesional,fechaInicio,fechaFin):
+        # create message object instance
+        msg = MIMEMultipart()
+        
+        
+        message = "Tuvo una sesion con: "+profesional+" inició: "+fechaInicio+" finalizó: "+fechaFin
+        # setup the parameters of the message
+        password = "gsbuqvkpqwryvhvq"
+        msg['From'] = "APPsico@outlook.com"
+        msg['To'] = destinatario
+        msg['Subject'] = "Nueva sesion con "+profesional
+        
+        # add in the message body
+        msg.attach(MIMEText(message, 'plain'))
+        
+        #create server
+        server = smtplib.SMTP('smtp.live.com: 587')
+        
+        server.starttls()
+        
+        # Login Credentials for sending the mail
+        server.login(msg['From'], password)
+        
+        
+        # send the message via the server.
+        server.sendmail(msg['From'], msg['To'], msg.as_string())
+        
+        server.quit()
+
+        #print ("successfully sent email to %s:" % (msg['To']))

@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk, messagebox
 from tkinter import scrolledtext as st
 from tkinter.ttk import *
+import re
 import sys
 from sys import platform as _platform
 import platform
@@ -105,13 +106,28 @@ class IfazPrincipal:
             self.treePaciente.insert('', 'end', text=paciente[1], values=(paciente[2], paciente[3], paciente[4]), iid=paciente[0])
 
     def nuevoPaciente(self, txtComentarios):
-        try:
-            self.pacientes.alta(self.nombre.get(), self.apellido.get(), self.email.get(), self.telefono.get(), txtComentarios, self.usuario)
-            messagebox.showinfo("Se creo correctamente", "El paciente " +self.nombre.get()+" "+self.apellido.get()+" fue creado correctamente")
-            self.cerrarDialogo(self.dlgNvoPaciente,self.ventanaPrincipal)
-        except:
-            messagebox.showinfo("Error al crear el paciente", "No se pudo crear")
-        self.buscarPaciente(2)
+        ok=True
+        if self.nombre.get() == "" :
+            ok=False
+            messagebox.showinfo("Error", "El campo nombre se encuentra vacio")
+        if self.apellido.get() == "":
+            ok=False
+            messagebox.showinfo("Error", "El campo Apellido se encuentra vacio")
+        if not re.match('^[(a-z0-9\_\-\.)]+@[(a-z0-9\_\-\.)]+\.[(a-z)]{2,15}$',self.email.get().lower()):
+            ok=False
+            messagebox.showinfo("Error", "El formato del mail tiene que ser nombre@dominio.extension")
+        if self.telefono.get() != "":
+            if not re.match('\d{6,9}',self.telefono.get()) or not self.telefono.get().isdigit():
+                ok=False
+                messagebox.showinfo("Error", "El telefono no es valido (ejemplos: 099111222 ó 23001122 ó vacío)")
+        if ok:
+            try:
+                self.pacientes.alta(self.nombre.get(), self.apellido.get(), self.email.get(), self.telefono.get(), txtComentarios, self.usuario)
+                messagebox.showinfo("Se creo correctamente", "El paciente " +self.nombre.get()+" "+self.apellido.get()+" fue creado correctamente")
+                self.cerrarDialogo(self.dlgNvoPaciente,self.ventanaPrincipal)
+            except:
+                messagebox.showinfo("Error al crear el paciente", "No se pudo crear")
+            self.buscarPaciente(2)
 
     def visualizarPacientes(self):
         if self.treePaciente.focus():
@@ -180,7 +196,12 @@ class IfazPrincipal:
         txtMail.grid(row=2, column=1, pady=5, sticky="we")
         lblTel = Label(self.FrmNvoPaciente, text="Telefono: ")
         lblTel.grid(row=3, column=0, sticky="e", pady=5, padx=1)
-        txtTel = Entry(self.FrmNvoPaciente, textvariable=self.telefono)
+        def esNumero(accion,c,texto):
+            if accion != "1":
+                return True
+            return c in "0123456789." and len(texto) < 9
+        validarTel = self.FrmNvoPaciente.register(esNumero)
+        txtTel = Entry(self.FrmNvoPaciente, textvariable=self.telefono, validate="key", validatecommand=(validarTel, "%d", "%S", "%s"))
         txtTel.bind('<Button-3>',clickDerecho, add='')
         txtTel.grid(row=3, column=1, pady=5, sticky="we")
         lblComentarios = Label(self.FrmNvoPaciente, text="Notas: ")

@@ -107,12 +107,12 @@ class IfazPrincipal:
 
     def nuevoPaciente(self, txtComentarios):
         ok=True
-        if self.nombre.get() == "" :
+        if self.nombre.get() == "" or not self.nombre.get().isalpha():
             ok=False
-            messagebox.showinfo("Error", "El campo nombre se encuentra vacio")
-        if self.apellido.get() == "":
+            messagebox.showinfo("Error", "El campo nombre se encuentra vacio o contiene caracteres invalidos")
+        if self.apellido.get() == "" or not self.apellido.get().isalpha():
             ok=False
-            messagebox.showinfo("Error", "El campo Apellido se encuentra vacio")
+            messagebox.showinfo("Error", "El campo Apellido se encuentra vacio o contiene caracteres invalidos")
         if not re.match('^[(a-z0-9\_\-\.)]+@[(a-z0-9\_\-\.)]+\.[(a-z)]{2,15}$',self.email.get().lower()):
             ok=False
             messagebox.showinfo("Error", "El formato del mail tiene que ser nombre@dominio.extension")

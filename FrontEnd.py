@@ -136,13 +136,28 @@ class IfazPrincipal:
             messagebox.showinfo("Error", "No se seleccionó ningún paciente")
 
     def modificarPacientes(self, id_paciente, txtComentarios):
-        try:
-            self.pacientes.modificar(str(id_paciente), self.nombre.get(), self.apellido.get(), self.email.get(), self.telefono.get(), txtComentarios)
-            messagebox.showinfo("Se Modifico correctamente", "El paciente " +self.nombre.get()+" "+self.apellido.get()+" se modifico correctamente")
-            self.buscarPaciente(2)
-            self.cerrarDialogo(self.dlgNvoPaciente,self.ventanaPrincipal)
-        except:
-            messagebox.showinfo("Error al crear el paciente", "No se pudo crear")
+        ok=True
+        if self.nombre.get() == "" or not self.nombre.get().isalpha():
+            ok=False
+            messagebox.showinfo("Error", "El campo nombre se encuentra vacio o contiene caracteres invalidos")
+        if self.apellido.get() == "" or not self.apellido.get().isalpha():
+            ok=False
+            messagebox.showinfo("Error", "El campo Apellido se encuentra vacio o contiene caracteres invalidos")
+        if not re.match('^[(a-z0-9\_\-\.)]+@[(a-z0-9\_\-\.)]+\.[(a-z)]{2,15}$',self.email.get().lower()):
+            ok=False
+            messagebox.showinfo("Error", "El formato del mail tiene que ser nombre@dominio.extension")
+        if self.telefono.get() != "":
+            if not re.match('\d{8,9}',self.telefono.get()) or not self.telefono.get().isdigit():
+                ok=False
+                messagebox.showinfo("Error", "El telefono no es valido (ejemplos: 099111222 ó 23001122 ó vacío)")
+        if ok:
+            try:
+                self.pacientes.modificar(str(id_paciente), self.nombre.get(), self.apellido.get(), self.email.get(), self.telefono.get(), txtComentarios)
+                messagebox.showinfo("Se Modifico correctamente", "El paciente " +self.nombre.get()+" "+self.apellido.get()+" se modifico correctamente")
+                self.buscarPaciente(2)
+                self.cerrarDialogo(self.dlgNvoPaciente,self.ventanaPrincipal)
+            except:
+                messagebox.showinfo("Error al crear el paciente", "No se pudo crear")
 
     def eliminarPaciente(self, id_paciente):
         resultado = messagebox.askquestion("Eliminar", "¿Esta seguro que desea eliminar al paciente?", icon='warning')

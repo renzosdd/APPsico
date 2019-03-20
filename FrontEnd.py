@@ -120,9 +120,12 @@ class IfazPrincipal:
             if not re.match('\d{6,9}',self.telefono.get()) or not self.telefono.get().isdigit():
                 ok=False
                 messagebox.showinfo("Error", "El telefono no es valido (ejemplos: 099111222 ó 23001122 ó vacío)")
+        if self.pacientes.consulta("SELECT * FROM pacientes WHERE nombre = '"+self.nombre.get().capitalize() +"' AND apellido = '"+self.apellido.get().capitalize()+"' AND usuario = '"+self.usuario+"'"):
+            messagebox.showinfo("Error", "Ya existe un paciente con el mismo nombre y apellido")
+            ok=False
         if ok:
             try:
-                self.pacientes.alta(self.nombre.get(), self.apellido.get(), self.email.get(), self.telefono.get(), txtComentarios, self.usuario)
+                self.pacientes.alta(self.nombre.get().capitalize(), self.apellido.get().capitalize(), self.email.get(), self.telefono.get(), txtComentarios, self.usuario)
                 messagebox.showinfo("Se creo correctamente", "El paciente " +self.nombre.get()+" "+self.apellido.get()+" fue creado correctamente")
                 self.cerrarDialogo(self.dlgNvoPaciente,self.ventanaPrincipal)
             except:

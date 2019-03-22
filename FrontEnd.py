@@ -14,7 +14,6 @@ class IfazPrincipal:
         self.ventanaPrincipal.title("APPSico - El Bosque")
         self.ventanaPrincipal.iconbitmap('APPsico.ico')
         self.ventanaPrincipal.resizable(0, 0)
-
         self.ventanaPrincipal.protocol("WM_DELETE_WINDOW", lambda: self.cerrarDialogo(self.ventanaPrincipal,ifazLogin))
         self.pacientes = B.Paciente()
         self.sesiones=B.Sesion()
@@ -119,9 +118,12 @@ class IfazPrincipal:
             if not re.match(r'\d{6,9}',self.telefono.get()) or not self.telefono.get().isdigit():
                 ok=False
                 messagebox.showinfo("Error", "El telefono no es valido (ejemplos: 099111222 ó 23001122 ó vacío)")
+        if self.pacientes.consulta("SELECT * FROM pacientes WHERE nombre = '"+self.nombre.get().capitalize() +"' AND apellido = '"+self.apellido.get().capitalize()+"' AND usuario = '"+self.usuario+"'"):
+            messagebox.showinfo("Error", "Ya existe un paciente con el mismo nombre y apellido")
+            ok=False
         if ok:
             try:
-                self.pacientes.alta(self.nombre.get(), self.apellido.get(), self.email.get(), self.telefono.get(), txtComentarios, self.usuario)
+                self.pacientes.alta(self.nombre.get().capitalize(), self.apellido.get().capitalize(), self.email.get(), self.telefono.get(), txtComentarios, self.usuario)
                 self.cerrarDialogo(self.dlgNvoPaciente,self.ventanaPrincipal)
                 messagebox.showinfo("Se creo correctamente", "El paciente " +self.nombre.get()+" "+self.apellido.get()+" fue creado correctamente")
             except:
@@ -129,7 +131,7 @@ class IfazPrincipal:
             self.buscarPaciente(2)
 
     def visualizarPacientes(self):
-        if self.treePaciente.focus():
+        if self.treePaciente.focus(): 
             self.ifazFichaPaciente(self.treePaciente.focus())
         else:
             messagebox.showinfo("Error", "No se seleccionó ningún paciente")
@@ -155,7 +157,6 @@ class IfazPrincipal:
                 self.cerrarDialogo(self.dlgNvoPaciente,self.ventanaPrincipal)
                 messagebox.showinfo("Se Modifico correctamente", "El paciente " +self.nombre.get()+" "+self.apellido.get()+" se modifico correctamente")
                 self.buscarPaciente(2)
-
             except:
                 messagebox.showinfo("Error al crear el paciente", "No se pudo crear")
 
@@ -163,15 +164,12 @@ class IfazPrincipal:
         resultado = messagebox.askquestion("Eliminar", "¿Esta seguro que desea eliminar al paciente?", icon='warning')
         if resultado == 'yes':
             try:
-                self.cerrarDialogo(self.dlgNvoPaciente,self.ventanaPrincipal)
                 self.pacientes.baja(str(id_paciente))
+                self.cerrarDialogo(self.dlgNvoPaciente,self.ventanaPrincipal)
                 messagebox.showinfo("Éxito","Se elimino correctamente")
                 self.buscarPaciente(2)
-
             except:
                 messagebox.showinfo("Error","No se pudo eliminar")
-        else:
-            pass
 
     def cerrarDialogo(self,dialogo,parent):
         dialogo.destroy()
@@ -325,30 +323,36 @@ class IfazPrincipal:
 
     def nuevaSesion(self, fechainicio,horainicio, minutosinicio, fechafin, horafin, minutosfin, notas, idPacienteSel):
         try:
-            Hinicio=time(int(horainicio),int(minutosinicio))
-            Hfin=time(int(horafin),int(minutosfin))
-            FHinicio=str(fechainicio) + " " + str(Hinicio)
-            FHfin=str(fechafin) + " " + str(Hfin)
-            self.sesiones.alta(str(notas),FHinicio,FHfin,str(idPacienteSel))
-            self.recargarSesiones(idPacienteSel)
-            self.cerrarDialogo(self.dlgIfazSesion,self.dlgIfzSesiones)
-            try:
-                paciente=self.buscarPaciente(3, str(idPacienteSel))[0]
-                B.envioMail(paciente[3],str(self.usuario),str(FHinicio),str(FHfin))
-            except:
-                pass
+            fechaini = datetime.datetime.strptime(str(fechainicio)+" "+str(time(int(horainicio),int(minutosinicio))), "%Y-%m-%d %H:%M:%S")
+            fechafin = datetime.datetime.strptime(str(fechafin)+" "+str(time(int(horafin),int(minutosfin))), "%Y-%m-%d %H:%M:%S")
+            if(max(fechafin,fechaini)==fechaini):
+                messagebox.showerror("Error","La fecha y hora de inicio no puede ser mayor a la final")
+            elif(str(notas)==""):
+                messagebox.showerror("Error","La nota esta vacía")
+            else:
+                self.sesiones.alta(str(notas),str(fechaini),str(fechafin),str(idPacienteSel))
+                self.recargarSesiones(idPacienteSel)
+                self.cerrarDialogo(self.dlgIfazSesion,self.dlgIfzSesiones)
+                try:
+                    paciente=self.buscarPaciente(3, str(idPacienteSel))[0]
+                    #B.envioMail(paciente[3],str(self.usuario),str(FHinicio),str(FHfin))
+                except:
+                    pass
         except:
             messagebox.showerror("Error","No se pudo crear")
 
     def modificarSesion(self, fechainicio,horainicio, minutosinicio, fechafin, horafin, minutosfin, notas, idSesionSel,idPacienteSel):
         try:
-            Hinicio=time(int(horainicio),int(minutosinicio))
-            Hfin=time(int(horafin),int(minutosfin))
-            FHinicio=str(fechainicio) + " " + str(Hinicio)
-            FHfin=str(fechafin) + " " + str(Hfin)
-            self.sesiones.modificar(str(idSesionSel),notas,FHinicio,FHfin)
-            self.recargarSesiones(idPacienteSel)
-            self.cerrarDialogo(self.dlgIfazSesion,self.dlgIfzSesiones)
+            fechaini = datetime.datetime.strptime(str(fechainicio)+" "+str(time(int(horainicio),int(minutosinicio))), "%Y-%m-%d %H:%M:%S")
+            fechafin = datetime.datetime.strptime(str(fechafin)+" "+str(time(int(horafin),int(minutosfin))), "%Y-%m-%d %H:%M:%S")
+            if(max(fechafin,fechaini)==fechaini):
+                messagebox.showerror("Error","La fecha y hora de inicio no puede ser mayor a la final")
+            elif(str(notas)==""):
+                messagebox.showerror("Error","La nota esta vacía")
+            else:
+                self.sesiones.modificar(str(idSesionSel),notas,str(fechaini),str(fechafin))
+                self.recargarSesiones(idPacienteSel)
+                self.cerrarDialogo(self.dlgIfazSesion,self.dlgIfzSesiones)
         except:
             messagebox.showinfo("Error al modificar el paciente", "No se pudo modificar")
 
@@ -357,9 +361,9 @@ class IfazPrincipal:
         if resultado == 'yes':
             try:
                 self.sesiones.baja(str(idSesionSel))
-                self.cerrarDialogo(self.dlgIfazSesion,self.dlgIfzSesiones)
                 messagebox.showinfo("Éxito","Se elimino correctamente")
                 self.recargarSesiones(idPacienteSel)
+                self.cerrarDialogo(self.dlgIfazSesion,self.dlgIfzSesiones)
             except:
                 messagebox.showinfo("Error","No se pudo eliminar")
         else:
@@ -370,6 +374,10 @@ class IfazPrincipal:
         if (kargs and kargs[0]==''):
             messagebox.showinfo("Error", "No se seleccionó ningúna sesion")
             return
+        fechaActual=datetime.datetime.now()
+        horaActual=fechaActual.time().strftime("%H:%M:%S")
+        fechaActualMasUnaHora=fechaActual + datetime.timedelta(0,3600)
+        horaMasUna=fechaActualMasUnaHora.strftime("%H:%M:%S")
         self.habilitado = 0
         #Ocultamos la ventanaPrincipal mientras esta el dialogo abierto
         self.dlgIfzSesiones.withdraw()
@@ -384,27 +392,30 @@ class IfazPrincipal:
 
         ttk.Label(self.FrmIfazSesion, text='Inicio: ').grid(row=0,column=0, pady=5, padx=1, sticky="e")
         try:
-            fechaInicio = DateEntry(self.FrmIfazSesion, width=12, background='green',foreground='white', borderwidth=2)
+            fechaInicio = DateEntry(self.FrmIfazSesion, width=12, background='green',foreground='white', borderwidth=2,year=int(fechaActual.date().strftime("%Y")),month=int(fechaActual.date().strftime("%m")), day=int(fechaActual.date().strftime("%d")))
             fechaInicio.grid(row=0,column=1, pady=5, padx=1)
         except ValueError:
             print("Error UTF-8")
         spinboxHoraInicio=ttk.Spinbox(self.FrmIfazSesion, from_=00, to=23, width=5)
         spinboxHoraInicio.grid(row=0, column=2, pady=5, padx=1, sticky="w")
+        spinboxHoraInicio.set(horaActual[0:2])
         ttk.Label(self.FrmIfazSesion, text=":").grid(row=0,column=2, pady=5, padx=1)
         spinboxMinInicio=ttk.Spinbox(self.FrmIfazSesion, from_=00, to=59, width=5)
         spinboxMinInicio.grid(row=0, column=2, pady=5, padx=1, sticky="e")
+        spinboxMinInicio.set(horaActual[3:5])
         ttk.Label(self.FrmIfazSesion, text='Fin: ').grid(row=1,column=0, pady=5, padx=1, sticky="e")
         try:
-            fechaFin = DateEntry(self.FrmIfazSesion, width=12, background='green',foreground='white', borderwidth=2)
+            fechaFin = DateEntry(self.FrmIfazSesion, width=12, background='green',foreground='white', borderwidth=2, year=int(fechaActualMasUnaHora.date().strftime("%Y")),month=int(fechaActualMasUnaHora.date().strftime("%m")), day=int(fechaActualMasUnaHora.date().strftime("%d")))
             fechaFin.grid(row=1,column=1, pady=5, padx=1)
         except ValueError:
             print("Error UTF-8")
         spinboxHoraFin=ttk.Spinbox(self.FrmIfazSesion, from_=00, to=23, width=5)
         spinboxHoraFin.grid(row=1, column=2, pady=5, padx=1, sticky="w")
+        spinboxHoraFin.set(horaMasUna[0:2])
         ttk.Label(self.FrmIfazSesion, text=":").grid(row=1,column=2, pady=5, padx=1)
         spinboxMinFin=ttk.Spinbox(self.FrmIfazSesion, from_=00, to=59, width=5)
         spinboxMinFin.grid(row=1, column=2, pady=5, padx=1, sticky="e")
-
+        spinboxMinFin.set(horaMasUna[3:5])
         lblComentarios = Label(self.FrmIfazSesion, text="Notas: ")
         lblComentarios.grid(row=2, column=0, pady=5, padx=1, sticky="e")
         txtComentarios = st.ScrolledText(self.FrmIfazSesion, height=15, width=60)
@@ -513,6 +524,7 @@ class Aplicacion():
     def __init__(self):
         self.raiz = Tk()
         self.raiz.title("APPSico - El Bosque")
+        self.raiz.resizable(0, 0)
         logo = PhotoImage(file="APPsico.png")
         Label(self.raiz, compound = CENTER, text="", image=logo).pack(side=TOP, fill=BOTH, expand=True, padx=5, pady=5)
         self.raiz.iconbitmap('APPsico.ico')

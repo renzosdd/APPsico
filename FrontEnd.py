@@ -7,6 +7,7 @@ from sys import platform as _platform
 import BackEnd as B
 from tkcalendar import Calendar, DateEntry
 from datetime import datetime,time,date
+import datetime
 
 class IfazPrincipal:
     def __init__(self, ifazLogin,usuario):
@@ -161,10 +162,11 @@ class IfazPrincipal:
                 messagebox.showinfo("Error al crear el paciente", "No se pudo crear")
 
     def eliminarPaciente(self, id_paciente):
-        resultado = messagebox.askquestion("Eliminar", "¿Esta seguro que desea eliminar al paciente?", icon='warning')
+        resultado = messagebox.askquestion("Eliminar", "¿Esta seguro que desea eliminar al paciente?\n\n Si tiene sesiones asignadas también se eliminarán", icon='warning')
         if resultado == 'yes':
             try:
                 self.pacientes.baja(str(id_paciente))
+                B.query('DELETE FROM sesiones WHERE id_paciente = '+str(id_paciente)+';')
                 self.cerrarDialogo(self.dlgNvoPaciente,self.ventanaPrincipal)
                 messagebox.showinfo("Éxito","Se elimino correctamente")
                 self.buscarPaciente(2)
@@ -319,7 +321,7 @@ class IfazPrincipal:
             for entrada in self.treeifazSesiones.get_children():
                 self.treeifazSesiones.delete(entrada)
             for sesion in self.listaSesiones:
-                self.treeifazSesiones.insert('', 'end', text=sesion[2][8:10]+"-"+sesion[2][5:7]+"-"+sesion[2][0:4], values=(sesion[2][11:],sesion[3][11:],sesion[4]), iid=sesion[5])
+                self.treeifazSesiones.insert('', 'end', text=sesion[2][8:10]+"-"+sesion[2][5:7]+"-"+sesion[2][0:4], values=(sesion[2][11:],sesion[3][11:],sesion[4][0:20]+' ...'), iid=sesion[5])
 
     def nuevaSesion(self, fechainicio,horainicio, minutosinicio, fechafin, horafin, minutosfin, notas, idPacienteSel):
         try:

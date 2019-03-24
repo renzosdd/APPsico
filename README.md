@@ -1,6 +1,6 @@
-## Repo para el proyecto APPsico - ElBosque - BIT
+# Repo para el proyecto APPsico - ElBosque - BIT
 
-##### Pasos para configurar el entorno:
+## Pasos para configurar el entorno:
 
 
 1 - Instalar VSCode (https://code.visualstudio.com/)
@@ -16,6 +16,6 @@ Configurar cambiar terminal predeterminada a cmd agregando en user settings (CTR
     - Click en Abrir en Visual Studio Code
 3 - Instalar Python 3.7.2 (https://www.python.org/)
   
-##### Dependencias del proyecto:
+## Dependencias del proyecto:
     
 1 - tkcalendar (pip install tkcalendar)

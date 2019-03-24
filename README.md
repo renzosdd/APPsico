@@ -19,3 +19,15 @@ Configurar cambiar terminal predeterminada a cmd agregando en user settings (CTR
 ## Dependencias del proyecto:
     
 1 - tkcalendar (pip install tkcalendar)
+
+##### Para generar ejecutable
+
+1 - Instalar pyinstaller (pip install pyinstaller)
+
+2 - ejecutar comando desde consola estando posicionado en la carpeta del proyecto:
+
+```
+pyinstaller --hidden-import=sys --hidden-import=smtplib --hidden-import=datetime --hidden-import=email.message --hidden-import=re --hidden-import=tkcalendar --hidden-import=tkinter --windowed --noconsole --onefile --icon=./APPsico.ico FrontEnd.py
+```
+
+3 - Copiar los archivos APPsico.png, APPsico.ico y APPsico.bd a la carpeta dist

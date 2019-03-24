@@ -16,6 +16,6 @@ Configurar cambiar terminal predeterminada a cmd agregando en user settings (CTR
     - Click en Abrir en Visual Studio Code
 3 - Instalar Python 3.7.2 (https://www.python.org/)
   
-##### Instalar dependencias del proyecto:
+##### Dependencias del proyecto:
     
-tkcalendar (pip install tkcalendar)
+1 - tkcalendar (pip install tkcalendar)

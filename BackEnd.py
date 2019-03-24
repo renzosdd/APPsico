@@ -1,7 +1,6 @@
 import sqlite3
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 import smtplib
+import email.message
 
 con = sqlite3.connect('APPSico.db')
 
@@ -70,32 +69,83 @@ class Sesion:
 
 class envioMail:
     def __init__(self,destinatario,profesional,fechaInicio,fechaFin):
-        # create message object instance
-        msg = MIMEMultipart()
         
-        
-        message = "Tuvo una sesion con: "+profesional+" inició: "+fechaInicio+" finalizó: "+fechaFin
-        # setup the parameters of the message
-        password = "gsbuqvkpqwryvhvq"
+        server = smtplib.SMTP('smtp.live.com: 587')
+        email_content = """
+            <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+            <html xmlns="http://www.w3.org/1999/xhtml">
+            <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <title>Demystifying Email Design</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+            </head>
+            <body style="margin: 0; padding: 0;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">	
+                    <tr>
+                        <td style="padding: 10px 0 30px 0;">
+                            <table align="center" border="0" cellpadding="0" cellspacing="0" width="500" style="border: 1px solid #cccccc; border-collapse: collapse;">
+                                <tr>
+                                    <td align="center" bgcolor="#70bbd9" style="font-size: 28px; font-weight: bold; font-family: Arial, sans-serif;">
+                                        <img src="https://i.ibb.co/q7qRyx9/APPsico.png" alt="APPsico" width="500" height="300" style="display: block;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td bgcolor="#ffffff" style="padding: 40px 30px 40px 30px;">
+                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                            <tr>
+                                                <td style="color: #153643; font-family: Arial, sans-serif; font-size: 24px;">
+                                                    <b>Nueva consulta mediante APPsico</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 20px 0 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 15px;">
+                                                    Tuvo una consulta con <b>"""+profesional.capitalize()+"""</b>. <br/><br/> Comenzando con fecha y hora: <b>"""+fechaInicio+"""</b> <br/><br/>  Finalizando con fecha y hora:: <b>"""+fechaFin+"""</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td bgcolor="#f2eee2" style="padding: 30px 30px 30px 30px;">
+                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                            <tr>
+                                                <td style="color: #afe191; font-family: Arial, sans-serif; font-size: 14px;" width="75%">
+                                                    <b>&reg; APPsico - El Bosque</b><br/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>
+        """
+        msg = email.message.Message()
         msg['From'] = "APPsico@outlook.com"
         msg['To'] = destinatario
-        msg['Subject'] = "Nueva sesion con "+profesional
-        
-        # add in the message body
-        msg.attach(MIMEText(message, 'plain'))
-        
-        #create server
+        msg['Subject'] = "Nueva sesion con "+profesional.capitalize()+" mediante APPsico."
+
+        #Contraseña de aplicacion de Outlook
+        password = "jkpwkfjlkavnikzs"
+        #Creamos la cabecera y le agregamos el contenido
+        msg.add_header('Content-Type', 'text/html')
+        msg.set_payload(email_content)
+        #Creamos el servidor (en este caso usando Outlook)
         server = smtplib.SMTP('smtp.live.com: 587')
-        
         server.starttls()
-        
-        # Login Credentials for sending the mail
+        # Se realiza el login
         server.login(msg['From'], password)
-        
-        
-        # send the message via the server.
+        # Enviamos el mensaje mediante el servidor
         server.sendmail(msg['From'], msg['To'], msg.as_string())
-        
         server.quit()
 
-        #print ("successfully sent email to %s:" % (msg['To']))
+

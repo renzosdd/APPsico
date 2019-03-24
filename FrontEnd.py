@@ -337,7 +337,7 @@ class IfazPrincipal:
                 self.cerrarDialogo(self.dlgIfazSesion,self.dlgIfzSesiones)
                 try:
                     paciente=self.buscarPaciente(3, str(idPacienteSel))[0]
-                    #B.envioMail(paciente[3],str(self.usuario),str(FHinicio),str(FHfin))
+                    B.envioMail(paciente[3],str(self.usuario),str(fechaini),str(fechafin))
                 except:
                     pass
         except:

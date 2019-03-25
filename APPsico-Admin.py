@@ -55,11 +55,14 @@ class Admin():
 
     def listado(self):
         listaUsuarios=query("SELECT * FROM usuarios").fetchall()
+        mostrar=""
         for usuario in listaUsuarios:
             if (usuario[2]==0):
-                print(str(usuario[0])+" - Deshabilitado" )
+                mostrar+=(str(usuario[0])+" - Deshabilitado\n")
             else:
-                print(str(usuario[0])+" - Habilitado" )
+                mostrar+=(str(usuario[0])+" - Habilitado\n")
+        messagebox.showinfo("Usuarios y estado",mostrar)
+
     def crear(self):
             listaUsuarios=query("SELECT * FROM usuarios WHERE usuario='"+self.usuario.get().lower()+"'").fetchall()
             if(listaUsuarios == []):

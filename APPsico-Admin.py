@@ -68,7 +68,7 @@ class Admin():
             if(listaUsuarios == []):
                 if(self.validar(self.clave.get()) and self.validar(self.claveRepetida.get())):
                     if(self.clave.get()==self.claveRepetida.get()):
-                        query("INSERT INTO usuarios VALUES ('"+self.usuario.get().lower()+"','"+self.clave.get()+"') ")
+                        query("INSERT INTO usuarios VALUES ('"+self.usuario.get().lower()+"','"+self.clave.get()+"',"+str(1)+") ")
                         self.clave.set("")
                         self.claveRepetida.set("")
                         messagebox.showinfo("Éxito", "Usuario "+self.usuario.get()+" creado correctamente")

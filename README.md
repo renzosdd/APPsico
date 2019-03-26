@@ -20,6 +20,12 @@ Configurar cambiar terminal predeterminada a cmd agregando en user settings (CTR
     
 1 - tkcalendar (pip install tkcalendar)
 
+##### Dependencias Win 7, 8, 8.1 (64bit)
+
+1 - Para que funcione en estos sistemas es necesario instalar:
+
+    https://support.microsoft.com/es-es/help/2999226/update-for-universal-c-runtime-in-windows
+
 ##### Para generar ejecutable
 
 1 - Instalar pyinstaller (pip install pyinstaller)

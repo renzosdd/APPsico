@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['APPsico.py'],
-             pathex=['C:\\Users\\renzo\\Documents\\GitHub\\Pruebas'],
+             pathex=['C:\\Users\\renzo\\Documents\\GitHub\\APPSICO'],
              binaries=[],
              datas=[],
              hiddenimports=['sys', 'smtplib', 'datetime', 'email.message', 're', 'tkcalendar', 'tkinter', 'babel.numbers'],

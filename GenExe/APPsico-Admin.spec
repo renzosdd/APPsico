@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['APPsico-Admin.py'],
-             pathex=['C:\\Users\\renzo\\Documents\\GitHub\\Pruebas'],
+             pathex=['C:\\Users\\renzo\\Documents\\GitHub\\APPSICO'],
              binaries=[],
              datas=[],
              hiddenimports=['tkinter'],
